@@ -1,0 +1,7 @@
+{
+  "productName": "Heos Controller",
+  "version": "1.0.0",
+  "name": "heos-controller",
+  "main": "electron.js",
+  "dependencies": {}
+}

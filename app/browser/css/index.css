@@ -1,0 +1,19 @@
+#main-panel {
+  margin: 0;
+}
+.panel-footer {
+  padding-top: 0px;
+  padding-bottom: 0px;
+}
+.control {
+  display: flex;
+  height: 41px;
+  justify-content: center;
+  align-items: center;
+}
+.control:hover {
+  background-color: #DBDBDB;
+}
+.control>.glyphicon {
+  top: 0px;
+}
