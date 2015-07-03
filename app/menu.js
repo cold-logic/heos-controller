@@ -107,7 +107,7 @@ module.exports = exports = function() {
     submenu: [{
       label: "Documentation",
       click: function() {
-        require("shell").openExternal("https://github.com/tealium/tag-workbench/wiki")
+        require("shell").openExternal("https://github.com/cold-logic/heos-controller/wiki")
       }
     }]
   }]);
