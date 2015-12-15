@@ -2,6 +2,7 @@
   "name": "heos-controller",
   "version": "1.0.0",
   "description": "Controller for Denon Heos speakers",
+  "repository": "https://github.com/cold-logic/heos-controller",
   "main": "gulpfile.js",
   "scripts": {
     "setup": "npm install;bower install",
@@ -10,10 +11,10 @@
   },
   "author": "Christopher Davison",
   "license": "ISC",
-  "dependencies": {
+  "devDependencies": {
     "coffee-script": "^1.9.3",
     "electron-packager": "^5.0.0",
-    "electron-prebuilt": "^0.28.3",
+    "electron-prebuilt": "^0.36.0",
     "gulp": "^3.9.0",
     "rimraf": "^2.4.1"
   }
