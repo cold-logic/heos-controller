@@ -11,7 +11,7 @@ Desktop controller for [Denon Heos](http://heosbydenon.denon.com) wifi speakers.
 * Playback controls (previous, play/pause, next)
 
 ## Usage
-0. Download a release and place it into your Applications directory
+0. [Download a release](https://github.com/cold-logic/heos-controller/releases) and extract the app into your Applications directory
 0. Run the app and wait for speaker detection
 0. Select a speaker from the dropdown and use the controls
 
