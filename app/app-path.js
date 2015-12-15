@@ -1,4 +1,4 @@
-module.exports = exports = function(appDir) {
+module.exports = exports = function() {
   var path = require("path");
   
   var appPath;

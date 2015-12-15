@@ -2,7 +2,6 @@ module.exports = exports = function() {
   var app = require("app");
   var BrowserWindow = require("browser-window"); // Module to create native browser window.
   var Menu = require("menu");
-  var dialog = require("dialog");
 
   var mainMenu = Menu.buildFromTemplate([{
     label: "Heos Controller",
@@ -107,7 +106,7 @@ module.exports = exports = function() {
     submenu: [{
       label: "Documentation",
       click: function() {
-        require("shell").openExternal("https://github.com/cold-logic/heos-controller/wiki")
+        require("shell").openExternal("https://github.com/cold-logic/heos-controller/wiki");
       }
     }]
   }]);

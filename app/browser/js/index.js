@@ -1,4 +1,6 @@
-var net = require('net');
+/* global $ */
+
+var net = require("net");
 var connection, ui, lastCommand;
 
 window.onbeforeunload = function(e) {
@@ -11,7 +13,7 @@ window.onbeforeunload = function(e) {
 };
 
 (function () {
-  var dgram = require('dgram'); // dgram is UDP
+  var dgram = require("dgram"); // dgram is UDP
   var client = dgram.createSocket("udp4");
   client.bind(null, function () {
     var message = new Buffer(
@@ -107,7 +109,7 @@ function connect(ip) {
     host: ip,
     port: 1255
   }, function() { //'connect' listener
-    console.log('connected to server!');
+    console.log("connected to server!");
     setTimeout(function () {
       sendCmd("system/register_for_change_events", {
         enable: "off"
@@ -118,7 +120,7 @@ function connect(ip) {
       });
     }, 1000);
   });
-  connection.on('data', function(data) {
+  connection.on("data", function(data) {
     var event, json, events = data.toString().split("\r\n");
     for (var i = 0; i < events.length; i++) {
       event = events[i];
@@ -137,8 +139,8 @@ function connect(ip) {
       }
     }
   });
-  connection.on('end', function() {
-    console.log('disconnected from server');
+  connection.on("end", function() {
+    console.log("disconnected from server");
   });
 }
 
@@ -177,7 +179,7 @@ function toggleState (state) {
 }
 
 function populatePlayers(payload) {
-  ui.speaker_count.$.text("(" + payload.length + " detected)")
+  ui.speaker_count.$.text("(" + payload.length + " detected)");
   ui.speaker.$.children().remove();
   for (var i in payload) {
     var obj = payload[i];
