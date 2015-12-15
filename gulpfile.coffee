@@ -15,17 +15,18 @@ app =
 gulp.task "build", ->
   rimraf "build/*", ->
     packager 
-      "name": app.name
-      "app-version": app.version
-      "app-bundle-id": app.bundle
-      "helper-bundle-id": "#{app.bundle}.helper"
-      platform: "darwin"
-      arch: "x64"
-      version: "0.28.3"
-      dir: "./app"
-      out: "./build"
-      asar: true
-      sign: false
+      "name"             : app.name
+      "app-version"      : app.version
+      "app-bundle-id"    : app.bundle
+      "helper-bundle-id" : "#{app.bundle}.helper"
+      "platform"         : "darwin"
+      "arch"             : "x64"
+      "version"          : "0.36.0"
+      "dir"              : "./app"
+      "out"              : "./build"
+      "asar"             : true
+      "sign"             : false
+      "icon"             : "icon.icns"
     , (err) ->
       if err then console.log err
       console.log "Done"
