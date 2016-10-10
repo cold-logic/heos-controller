@@ -12,10 +12,10 @@
   "author": "Christopher Davison",
   "license": "ISC",
   "devDependencies": {
-    "coffee-script": "^1.9.3",
-    "electron-packager": "^5.0.0",
-    "electron-prebuilt": "^0.36.0",
-    "gulp": "^3.9.0",
-    "rimraf": "^2.4.1"
+    "coffee-script": "^1.11.1",
+    "electron-packager": "^8.1.0",
+    "electron": "^1.4.3",
+    "gulp": "^3.9.1",
+    "rimraf": "^2.5.4"
   }
 }
