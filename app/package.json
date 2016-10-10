@@ -1,6 +1,8 @@
 {
   "productName": "Heos Controller",
-  "version": "1.0.0",
+  "description": "Controller for Denon Heos speakers",
+  "author": "Christopher Davison",
+  "version": "1.0.1",
   "name": "heos-controller",
   "main": "index.js",
   "dependencies": {}
