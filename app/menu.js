@@ -1,4 +1,4 @@
-const {app, Menu, BrowserWindow} = require("electron");
+const {app, Menu, BrowserWindow, shell} = require("electron");
 
 module.exports = exports = Menu.buildFromTemplate([{
   label: "Heos Controller",
@@ -103,7 +103,7 @@ module.exports = exports = Menu.buildFromTemplate([{
   submenu: [{
     label: "Documentation",
     click: function() {
-      require("shell").openExternal("https://github.com/cold-logic/heos-controller/wiki");
+      shell.openExternal("https://github.com/cold-logic/heos-controller/wiki");
     }
   }]
 }]);
