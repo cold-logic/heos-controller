@@ -15,7 +15,7 @@
   "license": "ISC",
   "devDependencies": {
     "electron": "^1.4.3",
-    "electron-builder": "^7.13.0"
+    "electron-builder": "^7.14.1"
   },
   "build": {
     "appId": "me.christopherd.heos-controller",
