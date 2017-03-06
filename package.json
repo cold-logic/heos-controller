@@ -14,8 +14,8 @@
   "author": "Christopher Davison",
   "license": "ISC",
   "devDependencies": {
-    "electron": "^1.4.13",
-    "electron-builder": "^12.0.3"
+    "electron": "^1.6.1",
+    "electron-builder": "^15.1.1"
   },
   "build": {
     "appId": "me.christopherd.heos-controller",
