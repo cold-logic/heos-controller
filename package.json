@@ -14,7 +14,7 @@
   "author": "Christopher Davison",
   "license": "ISC",
   "devDependencies": {
-    "electron": "^1.7.3",
+    "electron": "^1.7.4",
     "electron-builder": "^19.8.0"
   },
   "build": {
