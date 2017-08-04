@@ -11,6 +11,8 @@
     window.$ = window.jQuery = require('./bower_components/jquery/dist/jquery.min.js');
   </script>
   <script src="bower_components/jquery-knob/dist/jquery.knob.min.js"></script>
+  <!-- Fix for https://bugs.chromium.org/p/chromium/issues/detail?id=641509 -->
+  <style> ::selection { background: white; /* WebKit/Blink Browsers */ } </style>
 </head>
 <body>
   <div id="main-panel" class="panel panel-default">

@@ -1,10 +1,11 @@
 /* global $ */
 
 var net = require("net");
-var connection, ui, lastCommand;
+var connection, ui, lastCommand, discovery_interval;
 
+// Before the window closes, de-register and disconnect
 window.onbeforeunload = function(e) {
-  if (connection.readyState == "open") {
+  if (connection && connection.readyState == "open") {
     sendCmd("system/register_for_change_events", {
       enable: "off"
     });
@@ -12,29 +13,7 @@ window.onbeforeunload = function(e) {
   }
 };
 
-(function () {
-  var dgram = require("dgram"); // dgram is UDP
-  var client = dgram.createSocket("udp4");
-  client.bind(null, function () {
-    var message = new Buffer(
-      "M-SEARCH * HTTP/1.1\r\n" +
-      "HOST: 239.255.255.250:1900\r\n" +
-      "MAN: \"ssdp:discover\"\r\n" +
-      "ST: urn:schemas-denon-com:device:ACT-Denon:1\r\n" + // Essential, used by the client to specify what they want to discover, eg 'ST:ge:fridge'
-      "MX: 1\r\n" + // 1 second to respond (but they all respond immediately?)
-      "\r\n"
-    );
-    console.log("Sending on port " + client.address().port);
-    
-    client.on("message", function (msg, rinfo) {
-      console.log("server got: " + msg + " from " + rinfo.address + ":" + rinfo.port);
-      client.close();
-      connect(rinfo.address);
-    });
-    client.send(message, 0, message.length, 1900, "239.255.255.250");
-  });
-})();
-
+// Setup UI event handlers
 $(function() {
   var jQ = (function() {
     function jQ(s) {
@@ -104,8 +83,42 @@ $(function() {
   });
 });
 
+// Start the SSDP discovery process
+discover();
+
+/******************************
+ * Functions
+ ******************************/
+
+function discover() {
+  var dgram = require("dgram"); // dgram is UDP
+  var client = dgram.createSocket("udp4");
+  client.bind(null, function () {
+    var message = new Buffer(
+      "M-SEARCH * HTTP/1.1\r\n" +
+      "HOST: 239.255.255.250:1900\r\n" +
+      "MAN: \"ssdp:discover\"\r\n" +
+      "ST: urn:schemas-denon-com:device:ACT-Denon:1\r\n" + // Essential, used by the client to specify what they want to discover, eg 'ST:ge:fridge'
+      "MX: 1\r\n" + // 1 second to respond (but they all respond immediately?)
+      "\r\n"
+    );
+    console.log("Sending on port " + client.address().port);
+    
+    client.on("message", function (msg, rinfo) {
+      console.log("server got: " + msg + " from " + rinfo.address + ":" + rinfo.port);
+      client.close();
+      connect(rinfo.address);
+      clearInterval(discovery_interval);
+    });
+    client.send(message, 0, message.length, 1900, "239.255.255.250");
+  });
+  if (!discovery_interval) // Setup an interval to keep trying to discover speakers
+    discovery_interval = setInterval(discover, 10000)
+}
+
+// Connect to the speaker
 function connect(ip) {
-  connection = net.connect({
+  connection = net.createConnection({
     host: ip,
     port: 1255
   }, function() { //'connect' listener
@@ -144,6 +157,7 @@ function connect(ip) {
   });
 }
 
+// Cleanup the msg and execute a callback
 function parseMsg (msg, cb) {
   var args = [], qs = msg.split("&");
   for (var i = 0; i < qs.length; i++) {
@@ -152,8 +166,9 @@ function parseMsg (msg, cb) {
   if (typeof cb == "function") cb.apply(this, args);
 }
 
+// Send a command to the HEOS API
 function sendCmd (cmd, obj) {
-  if (connection.readyState == "open") {
+  if (connection && connection.readyState == "open") {
     var msg = "heos://" + cmd;
     var qs = [];
     if (obj) {
@@ -169,6 +184,7 @@ function sendCmd (cmd, obj) {
   }
 }
 
+// Toggle UI play/pause/stop button
 function toggleState (state) {
   var toggle = {
     "play": "pause",
@@ -178,6 +194,7 @@ function toggleState (state) {
   return toggle[state];
 }
 
+// Fill the speaker dropdown with what we've discovered
 function populatePlayers(payload) {
   ui.speaker_count.$.text("(" + payload.length + " detected)");
   ui.speaker.$.children().remove();
@@ -191,10 +208,13 @@ function populatePlayers(payload) {
     }
     ui.speaker.$.append(option);
   }
-  getVolume(payload[0].pid);
-  getState(payload[0].pid);
+  if (payload[0] && payload[0].pid) {
+    getVolume(payload[0].pid);
+    getState(payload[0].pid);
+  }
 }
 
+// Set the UI volume dial level
 function populateVolume(pid, level) {
   lastCommand = "populateVolume";
   if (ui.speaker.$.children().filter(":selected").data("pid") == pid) {
@@ -202,6 +222,7 @@ function populateVolume(pid, level) {
   }
 }
 
+// Set the UI play/pause/stop button's state
 function populateState (pid, state) {
   lastCommand = "populateState";
   if (ui.speaker.$.children().filter(":selected").data("pid") == pid) {
@@ -211,24 +232,28 @@ function populateState (pid, state) {
   }
 }
 
+// Query HEOS API for volume
 function getVolume(pid) {
   sendCmd("player/get_volume", {
     pid: pid
   });
 }
 
+// Query HEOS API for state
 function getState (pid) {
   sendCmd("player/get_play_state", {
     pid: "-652946493"
   });
 }
 
+// Query HEOS API for play queue
 function getPlayQueue (pid, range) {
   sendCmd("player/get_queue", {
     pid: "-652946493"
   });
 }
 
+// Crank the volume to 11 ;)
 function setVolume(pid, level) {
   sendCmd("player/set_volume", {
     pid: pid,
@@ -236,6 +261,7 @@ function setVolume(pid, level) {
   });
 }
 
+// Play that funky music
 function setState(pid, state) {
   sendCmd("player/set_play_state", {
     pid: pid,
@@ -244,12 +270,14 @@ function setState(pid, state) {
   populateState(pid, state);
 }
 
+// Play my jam again!
 function playPrev (pid) {
   sendCmd("player/play_previous", {
     pid: pid
   });
 }
 
+// NOPE! Next song plz...
 function playNext (pid) {
   sendCmd("player/play_next", {
     pid: pid
