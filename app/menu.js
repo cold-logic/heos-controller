@@ -33,6 +33,13 @@ module.exports = exports = Menu.buildFromTemplate([{
     }
   }]
 }, {
+  label: "File",
+  submenu: [{
+    label: "Close Window",
+    accelerator: "Command+W",
+    selector: "performClose:"
+  }]
+}, {
   label: "Edit",
   submenu: [{
     label: "Undo",
