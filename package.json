@@ -1,6 +1,6 @@
 {
   "name": "heos-controller",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Controller for Denon Heos speakers",
   "repository": "https://github.com/cold-logic/heos-controller",
   "main": "gulpfile.js",
@@ -15,7 +15,7 @@
   "license": "ISC",
   "devDependencies": {
     "electron": "^1.7.6",
-    "electron-builder": "^19.22.1"
+    "electron-builder": "^19.22.3"
   },
   "build": {
     "appId": "me.christopherd.heos-controller",
