@@ -6,8 +6,10 @@
   "main": "gulpfile.js",
   "scripts": {
     "setup": "npm install;bower install",
-    "pack": "build --dir",
-    "dist": "build",
+    "pack": "electron-builder --dir",
+    "dist": "electron-builder",
+    "postinstall": "electron-builder install-app-deps",
+    "release": "build",
     "start": "electron app",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
