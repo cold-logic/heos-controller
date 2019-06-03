@@ -1,9 +1,10 @@
-"use strict";
+// Vendor deps
+const {app, BrowserWindow, Menu} = require('electron');
+const log = require('electron-log')
+const {autoUpdater} = require('electron-updater')
 
-const {app, BrowserWindow, Menu} = require("electron");
-const menu = require("./menu.js")
-const log = require("electron-log")
-const {autoUpdater} = require("electron-updater")
+// Local deps
+const menu = require('./menu.js')
 
 autoUpdater.logger = log;
 autoUpdater.logger.transports.file.level = 'info';
@@ -63,19 +64,22 @@ app.on("ready", function() {
 
   // Create the browser window.
   mainWindow = new BrowserWindow({
-    "center": true,
-    "width": 350,
-    "height": 413,
-    "min-width": 350,
-    "min-height": 413,
-    "show": false
+    'min-width': 350,
+    'min-height': 413,
+    center: true,
+    width: 350,
+    height: 413,
+    show: false,
+    webPreferences: {
+      nodeIntegration: true
+    }
   });
 
   // Setup the main menu
   Menu.setApplicationMenu(menu);
 
   // Load the homepage
-  mainWindow.loadURL(`file://${appPath}/index.html`);
+  mainWindow.loadFile('browser/index.html');
   mainWindow.show();
 
   // Open the dev tools

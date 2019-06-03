@@ -1,5 +1,8 @@
 /* global $ */
 
+window.$ = window.jQuery = require('./bower_components/jquery/dist/jquery.min.js')
+require('./bower_components/jquery-knob/dist/jquery.knob.min.js')
+
 var net = require("net");
 var connection, ui, lastCommand, discovery_interval;
 
@@ -94,7 +97,7 @@ function discover() {
   var dgram = require("dgram"); // dgram is UDP
   var client = dgram.createSocket("udp4");
   client.bind(null, function () {
-    var message = new Buffer(
+    var message = Buffer.from(
       "M-SEARCH * HTTP/1.1\r\n" +
       "HOST: 239.255.255.250:1900\r\n" +
       "MAN: \"ssdp:discover\"\r\n" +
@@ -103,7 +106,7 @@ function discover() {
       "\r\n"
     );
     console.log("Sending on port " + client.address().port);
-    
+
     client.on("message", function (msg, rinfo) {
       console.log("server got: " + msg + " from " + rinfo.address + ":" + rinfo.port);
       client.close();
