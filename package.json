@@ -9,7 +9,7 @@
     "pack": "electron-builder --dir",
     "dist": "electron-builder",
     "postinstall": "electron-builder install-app-deps",
-    "release": "build",
+    "release": "node release",
     "start": "electron app",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -27,5 +27,8 @@
     "electron-builder": "^20.2.0",
     "electron-log": "^2.2.16",
     "electron-updater": "^2.16.3"
+  },
+  "devDependencies": {
+    "dotenv": "^8.0.0"
   }
 }

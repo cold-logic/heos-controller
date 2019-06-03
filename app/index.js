@@ -2,7 +2,7 @@
 
 const {app, BrowserWindow, Menu} = require("electron");
 const menu = require("./menu.js")
-const log = require('electron-log')
+const log = require("electron-log")
 const {autoUpdater} = require("electron-updater")
 
 autoUpdater.logger = log;
@@ -49,7 +49,7 @@ autoUpdater.on('update-downloaded', (info) => {
   // In your application, you don't need to wait 5 seconds.
   // You could call autoUpdater.quitAndInstall(); immediately
   setTimeout(function() {
-    autoUpdater.quitAndInstall();  
+    autoUpdater.quitAndInstall();
   }, 5000)
 })
 
@@ -77,7 +77,7 @@ app.on("ready", function() {
   // Load the homepage
   mainWindow.loadURL(`file://${appPath}/index.html`);
   mainWindow.show();
-  
+
   // Open the dev tools
   // mainWindow.webContents.openDevTools();
 
