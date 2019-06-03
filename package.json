@@ -9,6 +9,7 @@
     "dist": "env-cmd electron-builder",
     "postinstall": "env-cmd electron-builder install-app-deps",
     "release": "env-cmd build",
+    "build": "env-cmd electron-builder build",
     "start": "electron app",
     "test": "echo \"Error: no test specified\" && exit 1"
   },

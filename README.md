@@ -17,10 +17,16 @@ Desktop controller for [Denon Heos](http://heosbydenon.denon.com) wifi speakers.
 
 ## Development
 1. Clone this repo
-2. Install all the node and bower packages using the `npm run setup` command
-3. Run the app using `npm start` or `gulp`
+2. Install all the dependencies using the `yarn install` command
+3. Run the app using `yarn start`
 4. To preview changes made in the *app* directory while the app is running, refresh with the (cmd-r) hot key
 5. Dev tools are available using the (cmd-opt-i) hot key
+
+## Generating the compiled app
+1. Rename `.env.example` to `.env`. This will disable code signing.
+2. To generate only the app bundle run: `yarn run pack`
+3. To generate the app bundle, ZIP and DMG, run: `yarn build`
+4. Look in the `dist` folder for the results
 
 ## ToDo
 * Detection and control of grouped speakers
