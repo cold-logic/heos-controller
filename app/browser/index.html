@@ -3,6 +3,11 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="Content-Security-Policy"
+    content="script-src
+    'sha256-hl04hLzKBpmsfWF2wIA/0Vs6ZNV5T9ZNFY//3uXrgSk='
+    'nonce-a1b2c3d4'"
+  />
   <title>Heos Controller</title>
   <link rel="stylesheet" href="index.css">
   <!-- Fix for https://bugs.chromium.org/p/chromium/issues/detail?id=641509 -->
@@ -58,6 +63,6 @@
       </div>
     </div>
   </div>
-  <script src="index.js"></script>
+  <script nonce="a1b2c3d4" src="index.js"></script>
 </body>
 </html>
