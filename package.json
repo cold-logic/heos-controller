@@ -29,5 +29,8 @@
   },
   "engines": {
     "yarn": ">= 1.0.0"
+  },
+  "resolutions": {
+    "minimist": ">=1.2.3"
   }
 }
