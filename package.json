@@ -3,7 +3,7 @@
   "version": "1.0.3",
   "description": "Controller for Denon Heos speakers",
   "repository": "https://github.com/cold-logic/heos-controller",
-  "main": "gulpfile.js",
+  "main": "app/index.js",
   "scripts": {
     "pack": "env-cmd electron-builder --dir",
     "dist": "env-cmd electron-builder",
@@ -23,8 +23,8 @@
     }
   },
   "devDependencies": {
-    "electron": "^8.1.1",
-    "electron-builder": "^22.4.1",
+    "electron": "^8.2.2",
+    "electron-builder": "^22.5.1",
     "env-cmd": "^10.1.0"
   },
   "engines": {

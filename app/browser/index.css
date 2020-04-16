@@ -1,5 +1,5 @@
-@import url('bower_components/bootstrap/dist/css/bootstrap.min.css');
-@import url('bower_components/bootstrap/dist/css/bootstrap-theme.min.css');
+@import url('../node_modules/bootstrap/dist/css/bootstrap.min.css');
+@import url('../node_modules/bootstrap/dist/css/bootstrap-theme.min.css');
 
 #main-panel {
   margin: 0;

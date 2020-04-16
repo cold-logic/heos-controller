@@ -1,7 +1,7 @@
 /* global $ */
 
-window.$ = window.jQuery = require('./bower_components/jquery/dist/jquery.min.js')
-require('./bower_components/jquery-knob/dist/jquery.knob.min.js')
+window.$ = window.jQuery = require('jquery')
+require('jquery-knob/dist/jquery.knob.min.js')
 
 var net = require("net");
 var connection, ui, lastCommand, discovery_interval;
