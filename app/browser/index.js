@@ -112,8 +112,8 @@ function discover() {
       if ( msg.indexOf('ST: urn:schemas-denon-com:device:ACT-Denon:1') > -1) {
         client.close()
         connect(rinfo.address)
+        clearInterval(discovery_interval)
       }
-      clearInterval(discovery_interval);
     });
     client.send(message, 0, message.length, 1900, "239.255.255.250");
   });
