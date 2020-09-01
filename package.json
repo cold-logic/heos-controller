@@ -1,6 +1,6 @@
 {
   "name": "heos-controller",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "Controller for Denon Heos speakers",
   "repository": "https://github.com/cold-logic/heos-controller",
   "main": "app/index.js",
@@ -11,6 +11,7 @@
     "release": "env-cmd build",
     "build": "env-cmd electron-builder build",
     "start": "electron app",
+    "up": "yarn upgrade-interactive --latest",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Christopher Davison",
@@ -23,8 +24,8 @@
     }
   },
   "devDependencies": {
-    "electron": "^8.2.4",
-    "electron-builder": "^22.5.1",
+    "electron": "^10.1.1",
+    "electron-builder": "^22.8.0",
     "env-cmd": "^10.1.0"
   },
   "engines": {
