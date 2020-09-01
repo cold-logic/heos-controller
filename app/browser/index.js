@@ -108,9 +108,11 @@ function discover() {
     console.log("Sending on port " + client.address().port);
 
     client.on("message", function (msg, rinfo) {
-      console.log("server got: " + msg + " from " + rinfo.address + ":" + rinfo.port);
-      client.close();
-      connect(rinfo.address);
+      console.log(`server got: ${msg} from ${rinfo.address}:${rinfo.port}`);
+      if ( msg.indexOf('ST: urn:schemas-denon-com:device:ACT-Denon:1') > -1) {
+        client.close()
+        connect(rinfo.address)
+      }
       clearInterval(discovery_interval);
     });
     client.send(message, 0, message.length, 1900, "239.255.255.250");
@@ -121,10 +123,7 @@ function discover() {
 
 // Connect to the speaker
 function connect(ip) {
-  connection = net.createConnection({
-    host: ip,
-    port: 1255
-  }, function() { //'connect' listener
+  const connectListener = () => { // gets triggered on successful connection
     console.log("connected to server!");
     setTimeout(function () {
       sendCmd("system/register_for_change_events", {
@@ -135,7 +134,20 @@ function connect(ip) {
         enable: "on"
       });
     }, 1000);
-  });
+  }
+  connection = net.createConnection({
+    host: ip,
+    port: 1255
+  }, connectListener);
+  connection.on('error', err => {
+    console.error(new Date(), String(err))
+    if (err && err.code && err.code === 'ECONNREFUSED') {
+      setTimeout(function () {
+        console.log("Retrying connect...");
+        connection.connect(1255, ip, connectListener)
+      }, 3e4); // retry every 30 seconds
+    }
+  })
   connection.on("data", function(data) {
     var event, json, events = data.toString().split("\r\n");
     for (var i = 0; i < events.length; i++) {
@@ -199,7 +211,7 @@ function toggleState (state) {
 
 // Fill the speaker dropdown with what we've discovered
 function populatePlayers(payload) {
-  ui.speaker_count.$.text("(" + payload.length + " detected)");
+  ui.speaker_count.$.text(`(${payload.length} detected)`);
   ui.speaker.$.children().remove();
   for (var i in payload) {
     var obj = payload[i];

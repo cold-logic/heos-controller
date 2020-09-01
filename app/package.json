@@ -7,9 +7,9 @@
   "main": "index.js",
   "dependencies": {
     "bootstrap": "^3.4.1",
-    "electron-log": "^4.1.1",
-    "electron-updater": "^4.3.0",
-    "jquery": "^3.5.0",
+    "electron-log": "^4.2.4",
+    "electron-updater": "^4.3.4",
+    "jquery": "^3.5.1",
     "jquery-knob": "ssh://git@github.com:aterrien/jQuery-Knob.git"
   },
   "license": "ISC"
