@@ -8,7 +8,6 @@
     "pack": "env-cmd electron-builder --dir",
     "dist": "env-cmd electron-builder",
     "postinstall": "env-cmd electron-builder install-app-deps",
-    "release": "env-cmd build",
     "build": "env-cmd electron-builder build",
     "start": "electron app",
     "up": "yarn upgrade-interactive --latest",
@@ -18,9 +17,11 @@
   "license": "ISC",
   "build": {
     "appId": "me.christopherd.heos-controller",
+    "productName": "Heos Controller",
     "mac": {
       "icon": "icon.icns",
-      "category": "public.app-category.music"
+      "category": "public.app-category.music",
+      "publish": ["github"]
     }
   },
   "devDependencies": {
