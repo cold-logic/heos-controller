@@ -21,12 +21,14 @@
     "mac": {
       "icon": "icon.icns",
       "category": "public.app-category.music",
-      "publish": ["github"]
+      "publish": [
+        "github"
+      ]
     }
   },
   "devDependencies": {
-    "electron": "^10.1.1",
-    "electron-builder": "^22.8.0",
+    "electron": "^10.1.2",
+    "electron-builder": "^22.8.1",
     "env-cmd": "^10.1.0"
   },
   "engines": {
