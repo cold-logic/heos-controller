@@ -27,8 +27,8 @@
     }
   },
   "devDependencies": {
-    "electron": "^10.2.0",
-    "electron-builder": "^22.8.1",
+    "electron": "^11.2.1",
+    "electron-builder": "^22.9.1",
     "env-cmd": "^10.1.0"
   },
   "engines": {
