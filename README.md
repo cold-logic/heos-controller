@@ -34,6 +34,8 @@ Desktop controller for [Denon Heos](http://heosbydenon.denon.com) wifi speakers.
 * A slider to scrub and track playback position
 * A "sources" media stream picker
 
-## Reference Material
+## Reference Materials
 
-http://rn.dmglobal.com/euheos/HEOS_CLI_ProtocolSpecification.pdf
+- https://rn.dmglobal.com/usmodel/HEOS_CLI_ProtocolSpecification-Version.pdf
+- http://rn.dmglobal.com/euheos/HEOS_CLI_ProtocolSpecification.pdf
+- https://downloads.denon.com/documentmaster/us/heos_cli_protocolspecification-version.pdf
