@@ -36,6 +36,6 @@ Desktop controller for [Denon Heos](http://heosbydenon.denon.com) wifi speakers.
 
 ## Reference Materials
 
-- https://rn.dmglobal.com/usmodel/HEOS_CLI_ProtocolSpecification-Version.pdf
+- https://rn.dmglobal.com/usmodel/HEOS_CLI_ProtocolSpecification-Version-1.16.pdf
 - http://rn.dmglobal.com/euheos/HEOS_CLI_ProtocolSpecification.pdf
-- https://downloads.denon.com/documentmaster/us/heos_cli_protocolspecification-version.pdf
+- https://support.denon.com/app/answers/detail/a_id/6953/~/heos-control-protocol-%28cli%29
