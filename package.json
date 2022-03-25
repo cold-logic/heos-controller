@@ -24,6 +24,14 @@
       "publish": [
         "github"
       ]
+    },
+    "linux": {
+      "icon": "icon.icns",
+      "category": "public.app-category.music",
+      "target": "AppImage",
+      "publish": [
+        "github"
+      ]
     }
   },
   "devDependencies": {
