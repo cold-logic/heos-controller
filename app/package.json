@@ -2,14 +2,14 @@
   "productName": "Heos Controller",
   "description": "Controller for Denon Heos speakers",
   "author": "Christopher Davison",
-  "version": "1.0.5",
+  "version": "1.0.6",
   "name": "heos-controller",
   "main": "index.js",
   "dependencies": {
     "bootstrap": "^3.4.1",
-    "electron-log": "^4.3.1",
-    "electron-updater": "^4.3.5",
-    "jquery": "^3.5.1",
+    "electron-log": "^4.4.6",
+    "electron-updater": "^4.6.5",
+    "jquery": "^3.6.0",
     "jquery-knob": "ssh://git@github.com:aterrien/jQuery-Knob.git"
   },
   "license": "ISC"

@@ -1,7 +1,7 @@
 module.exports = exports = function() {
-  var path = require("path");
+  const path = require("path");
   
-  var appPath;
+  let appPath;
   
   // Determine if this is a packaged app or a gulp run
   if (process.resourcesPath.indexOf("/Heos Controller.app/") > -1) {

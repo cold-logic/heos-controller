@@ -57,8 +57,6 @@ autoUpdater.on('update-downloaded', (info) => {
 // This method will be called when Electron has done everything
 // initialization and ready for creating browser windows.
 app.on("ready", function() {
-  var appPath = require("./app-path.js")();
-
   // Check for updates
   autoUpdater.checkForUpdates();
 
@@ -71,6 +69,7 @@ app.on("ready", function() {
     height: 413,
     show: false,
     webPreferences: {
+      contextIsolation: false,
       nodeIntegration: true
     }
   });

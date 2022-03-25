@@ -1,22 +1,62 @@
 @import url('../node_modules/bootstrap/dist/css/bootstrap.min.css');
 @import url('../node_modules/bootstrap/dist/css/bootstrap-theme.min.css');
 
+body {
+  overflow: hidden;
+}
+
+#main-panel > .panel-body {
+  height: 100%;
+}
+
+#main-panel > .panel-body > .container-fluid {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
 #main-panel {
+  display: flex;
+  flex-direction: column;
+  /* justify-content: space-between; */
+  height: 100vh;
   margin: 0;
 }
-.panel-footer {
-  padding-top: 0px;
-  padding-bottom: 0px;
+
+.volume-row {
+  justify-content: center;
+  display: flex;
+  margin-top: 2rem;
+  height: 100%;
 }
+
+.volume-dial {
+  display: flex;
+  height: 100%;
+  justify-content: center;
+  width: 100%;
+}
+
+.volume-dial > div {
+  position: absolute;
+}
+
+.panel-footer {
+  margin-top: auto;
+  padding: 0px;
+}
+
 .control {
   display: flex;
   height: 41px;
   justify-content: center;
   align-items: center;
 }
+
 .control:hover {
   background-color: #DBDBDB;
 }
+
 .control>.glyphicon {
   top: 0px;
 }
