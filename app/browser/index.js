@@ -25,10 +25,9 @@ $(function() {
     }
     return jQ;
   })();
+
   ui = {
     dial: new jQ('.dial'),
-    dialContainer: document.querySelector('.volume-dial'),
-    dialCanvas: document.querySelector('.volume-dial canvas'),
     speaker: new jQ('#speaker'),
     speaker_count: new jQ('#speaker_count'),
     refresh: new jQ('#refresh'),
@@ -53,12 +52,6 @@ $(function() {
   }
 
   ui.dial.$.knob(knobConfig);
-
-  globalThis.addEventListener('resize', (e) => {
-    // Knob element has extra whitespace under it
-    // so we update the canvas height upon window resize
-    ui.dialCanvas.height = ui.dialContainer.clientHeight
-  })
 
   ui.speaker.$.on('change', function(e){
     const pid = $(this).find(':selected').data('pid');
