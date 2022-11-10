@@ -35,7 +35,7 @@
     }
   },
   "devDependencies": {
-    "electron": "^17.2.0",
+    "electron": "^18.3.7",
     "electron-builder": "^23.0.3",
     "env-cmd": "^10.1.0"
   },
