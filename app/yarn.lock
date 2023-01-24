@@ -48,10 +48,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"electron-log@npm:^4.4.6":
-  version: 4.4.6
-  resolution: "electron-log@npm:4.4.6"
-  checksum: cb385a3d220eaf13ff5a7d7ae2f6421ee6b4a3cf9c4026ae66dad37fc005c04ef224a511a01731c489c82a8ed78202dd6ead99e93d0fe951bdc215684df0b3b5
+"electron-log@npm:^4.4.8":
+  version: 4.4.8
+  resolution: "electron-log@npm:4.4.8"
+  checksum: 5a7958f8fd9a5c95987e885ffe1c5b88be15bb41d348b65c92e2d8664519faddf17ce0208cd4e7027b0908f92fecedfbef246a45061f53e4a53b5d2201aafbd9
   languageName: node
   linkType: hard
 
@@ -101,9 +101,9 @@ __metadata:
   resolution: "heos-controller@workspace:."
   dependencies:
     bootstrap: ^3.4.1
-    electron-log: ^4.4.6
+    electron-log: ^4.4.8
     electron-updater: ^4.6.5
-    jquery: ^3.6.0
+    jquery: ^3.6.3
     jquery-knob: "ssh://git@github.com:aterrien/jQuery-Knob.git"
   languageName: unknown
   linkType: soft
@@ -115,10 +115,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"jquery@npm:^3.6.0":
-  version: 3.6.0
-  resolution: "jquery@npm:3.6.0"
-  checksum: 8fd5fef4aa48fd374ec716dd1c1df1af407814a228e15c1260ca140de3a697c2a77c30c54ff1d238b6a3ab4ddc445ddeef9adce6c6d28e4869d85eb9d3951c0e
+"jquery@npm:^3.6.3":
+  version: 3.6.3
+  resolution: "jquery@npm:3.6.3"
+  checksum: 0fd366bdcaa0c84a7a8751ce20f8192290141913978b5059574426d9b01f4365daa675f95aab3eec94fd794d27b08d32078a2236bef404b8ba78073009988ce6
   languageName: node
   linkType: hard
 
