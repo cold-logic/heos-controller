@@ -1,6 +1,6 @@
 {
   "name": "heos-controller",
-  "version": "1.0.7",
+  "version": "1.0.8",
   "description": "Controller for Denon Heos speakers",
   "repository": "https://github.com/cold-logic/heos-controller",
   "main": "app/index.js",
@@ -39,5 +39,5 @@
     "electron-builder": "^23.6.0",
     "env-cmd": "^10.1.0"
   },
-  "packageManager": "yarn@3.2.0"
+  "packageManager": "yarn@3.3.1"
 }
