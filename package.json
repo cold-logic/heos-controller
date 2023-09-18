@@ -36,7 +36,7 @@
   },
   "packageManager": "pnpm@8.6.8",
   "dependencies": {
-    "electron": "^22.3.23",
+    "electron": "^22.3.24",
     "electron-builder": "^24.6.4",
     "env-cmd": "^10.1.0"
   },
