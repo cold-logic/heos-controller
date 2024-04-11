@@ -1,0 +1,63 @@
+name: Build Windows App
+
+on:
+  push:
+    branches: [ compile-exe, main ]
+  pull_request:
+    branches: [ compile-exe, main ]
+
+jobs:
+
+  build-windows:
+    runs-on: windows-latest
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Use Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: 20
+        
+    - name: Install pnpm
+      uses: pnpm/action-setup@v3
+      with:
+        version: 8
+        run_install: false
+
+    - name: Get pnpm store directory
+      shell: bash
+      run: |
+        echo "STORE_PATH=$(pnpm store path --silent)" >> $GITHUB_ENV
+
+    - uses: actions/cache@v4
+      name: Setup pnpm cache
+      with:
+        path: ${{ env.STORE_PATH }}
+        key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
+        restore-keys: |
+          ${{ runner.os }}-pnpm-store-
+
+    - name: Install dependencies
+      run: pnpm install --frozen-lockfile
+        
+    - name: Setup MSBuild
+      uses: microsoft/setup-msbuild@v2
+
+    - name: Create .env file
+      run: |
+        echo "GH_TOKEN=${{ secrets.GITHUB_TOKEN }}" >> .env
+
+    - name: Build Electron App
+      run: |
+        # Build the Electron app
+        npm run build
+        
+        # Package the app into a Windows executable
+        npm run package-win
+        
+    - name: Upload Artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: windows-executable
+        path: dist/*.exe

@@ -1,9 +1,13 @@
 /* global $ */
 
-window.$ = window.jQuery = require('jquery')
-require('jquery-knob/dist/jquery.knob.min.js')
+window.$ = window.jQuery = require('jquery');
+require('jquery-knob/dist/jquery.knob.min.js');
 
-const net = require('net');
+const dgram = require('node:dgram'); // dgram is UDP
+const net = require('node:net');
+const os = require('node:os'); 
+
+const HEOS_BROADCAST_ADDR = "239.255.255.250";
 let connection, ui, lastCommand, discovery_interval;
 
 // Before the window closes, de-register and disconnect
@@ -97,37 +101,78 @@ discover();
  * Functions
  ******************************/
 
+function broadcast_address() {
+  if (os.platform() == "win32") {
+    let addresses = [];
+    const ifaces = os.networkInterfaces();
+    Object.values(ifaces).forEach((i) => {
+      let iface_addresses = i.filter(iface => iface.family == "IPv4" && !iface.internal).map(iface => iface.address);
+      
+      // create broadcast address from interface adress
+      iface_addresses = iface_addresses.map(addr => {
+        let blocks = addr.split(".");
+        blocks[3] = "255";
+        return blocks.join(".");
+      });
+
+      addresses.push(...iface_addresses);
+    });
+    return addresses;
+  } else {
+    return [ HEOS_BROADCAST_ADDR ];
+  }
+}
+
 function discover() {
-  const dgram = require('dgram'); // dgram is UDP
   const client = dgram.createSocket('udp4');
-  client.bind(null, function () {
+  client.on('error', (err) => {
+    console.error(`client error:\n${err.stack}`);
+    client.close();
+  });
+  client.on('listening', () => {
+    const address = client.address();
+    console.log(`listening ${address.address}:${address.port}`);
+    const BROADCAST_ADDR = broadcast_address()[0];
     const message = Buffer.from(
       'M-SEARCH * HTTP/1.1\r\n' +
-      'HOST: 239.255.255.250:1900\r\n' +
+      `HOST: ${HEOS_BROADCAST_ADDR}:1900\r\n` +
       'MAN: "ssdp:discover"\r\n' +
       'ST: urn:schemas-denon-com:device:ACT-Denon:1\r\n' + // Essential, used by the client to specify what they want to discover, eg 'ST:ge:fridge'
       'MX: 1\r\n' + // 1 second to respond (but they all respond immediately?)
       '\r\n'
     );
-    console.log('Sending on port ' + client.address().port);
-
-    client.on('message', function (msg, rinfo) {
-      console.log(`server got: ${msg} from ${rinfo.address}:${rinfo.port}`);
-      if ( msg.indexOf('ST: urn:schemas-denon-com:device:ACT-Denon:1') > -1) {
-        client.close()
-        connect(rinfo.address)
-        clearInterval(discovery_interval)
-      }
-    });
-    client.send(message, 0, message.length, 1900, '239.255.255.250');
+    client.send(message, 0, message.length, 1900, BROADCAST_ADDR);
+    console.log('sent discovery request...');
   });
+  client.on('message', function (msg, rinfo) {
+    console.log(`client got: ${msg} from ${rinfo.address}:${rinfo.port}`);
+    if ( msg.indexOf('ST: urn:schemas-denon-com:device:ACT-Denon:1') > -1) {
+      client.close();
+      connect(rinfo.address);
+      clearInterval(discovery_interval);
+    }
+  });
+  client.bind(null);
   if (!discovery_interval) // Setup an interval to keep trying to discover speakers
     discovery_interval = setInterval(discover, 10000)
 }
 
 // Connect to the speaker
 function connect(ip) {
-  const connectListener = () => { // gets triggered on successful connection
+  connection = net.createConnection({
+    host: ip,
+    port: 1255
+  });
+  connection.on('error', err => {
+    console.error(new Date(), String(err))
+    if (err && err.code && err.code === 'ECONNREFUSED') {
+      setTimeout(function () {
+        console.log('Retrying connect...');
+        connection.connect(1255, ip, connectListener)
+      }, 3e4); // retry every 30 seconds
+    }
+  })
+  connection.on('connect', () => { // gets triggered on successful connection
     console.log('connected to server!');
     setTimeout(function () {
       sendCmd('system/register_for_change_events', {
@@ -138,20 +183,7 @@ function connect(ip) {
         enable: 'on'
       });
     }, 1000);
-  }
-  connection = net.createConnection({
-    host: ip,
-    port: 1255
-  }, connectListener);
-  connection.on('error', err => {
-    console.error(new Date(), String(err))
-    if (err && err.code && err.code === 'ECONNREFUSED') {
-      setTimeout(function () {
-        console.log('Retrying connect...');
-        connection.connect(1255, ip, connectListener)
-      }, 3e4); // retry every 30 seconds
-    }
-  })
+  });
   connection.on('data', function(data) {
     const events = data.toString().split('\r\n');
     for (const event of events) {
