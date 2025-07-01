@@ -39,7 +39,7 @@
   },
   "packageManager": "pnpm@8.15.6",
   "dependencies": {
-    "electron": "^29.2.0",
+    "electron": "^29.3.3",
     "electron-builder": "^24.13.3",
     "env-cmd": "^10.1.0"
   },
