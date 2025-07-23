@@ -39,7 +39,7 @@
   },
   "dependencies": {
     "electron": "^37.2.4",
-    "electron-builder": "26.0.12",
+    "electron-builder": "^26.0.12",
     "env-cmd": "^10.1.0"
   },
   "workspaces": [
