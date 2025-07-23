@@ -1,21 +1,18 @@
-@import url('../node_modules/bootstrap/dist/css/bootstrap.min.css');
-@import url('../node_modules/bootstrap/dist/css/bootstrap-theme.min.css');
-
 body {
   overflow: hidden;
 }
 
-#main-panel > .panel-body {
+#main-card > .card-body {
   height: 100%;
 }
 
-#main-panel > .panel-body > .container-fluid {
+#main-card > .card-body > .container-fluid {
   display: flex;
   flex-direction: column;
   height: 100%;
 }
 
-#main-panel {
+#main-card {
   display: flex;
   flex-direction: column;
   /* justify-content: space-between; */
@@ -24,9 +21,7 @@ body {
 }
 
 .volume-row {
-  justify-content: center;
-  display: flex;
-  margin-top: 2rem;
+  /* Bootstrap utilities now handle flexbox properties */
   height: 100%;
 }
 
@@ -41,7 +36,7 @@ body {
   position: absolute;
 }
 
-.panel-footer {
+.card-footer {
   margin-top: auto;
   padding: 0px;
 }
@@ -54,9 +49,11 @@ body {
 }
 
 .control:hover {
-  background-color: #DBDBDB;
+  background-color: var(--bs-gray-200);
 }
 
-.control>.glyphicon {
-  top: 0px;
+.control:focus {
+  background-color: var(--bs-gray-300);
+  outline: 2px solid var(--bs-primary);
+  outline-offset: -2px;
 }

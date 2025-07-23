@@ -9,57 +9,58 @@
     'nonce-a1b2c3d4'"
   />
   <title>Heos Controller</title>
+  <link rel="stylesheet" href="../node_modules/bootstrap/dist/css/bootstrap.min.css">
+  <link rel="stylesheet" href="../node_modules/bootstrap-icons/font/bootstrap-icons.css">
   <link rel="stylesheet" href="index.css">
   <!-- Fix for https://bugs.chromium.org/p/chromium/issues/detail?id=641509 -->
   <style> ::selection { background: white; /* WebKit/Blink Browsers */ } </style>
 </head>
 <body>
-  <div id="main-panel" class="panel panel-default">
-    <div class="panel-heading">
-      <h3 class="panel-title">Heos Controller</h3>
+  <div id="main-card" class="card">
+    <div class="card-header">
+      <h3 class="card-title">Heos Controller</h3>
     </div>
-    <div class="panel-body">
+    <div class="card-body">
       <div class="container-fluid">
         <div class="row">
-          <div class="col-xs-12">
-            <label for="speaker">Select a speaker <span id="speaker_count"></span></label>
+          <div class="col-12">
+            <label for="speaker" class="form-label">Select a speaker <span id="speaker_count"></span></label>
           </div>
         </div>
-        <div class="row">
-          <div class="col-xs-12">
+        <div class="row mb-3">
+          <div class="col-12">
             <div class="input-group">
-              <select id="speaker" class="form-control">
+              <select id="speaker" class="form-select">
                 <option>--</option>
               </select>
-              <span class="input-group-btn">
-                <button id="refresh" class="btn btn-default" type="button">
-                  <span class="glyphicon glyphicon-refresh" aria-hidden="true"></span>
-                </button>
-              </span>
+              <button id="refresh" class="btn btn-outline-secondary" type="button" aria-label="Refresh speaker list">
+                <i class="bi bi-arrow-clockwise" aria-hidden="true"></i>
+              </button>
             </div>
           </div>
         </div>
-        <div class="row volume-row">
+        <div class="row volume-row flex-grow-1 justify-content-center align-items-center">
           <div class="volume-dial">
             <input type="text" value="0" class="dial">
           </div>
         </div>
       </div>
     </div>
-    <div class="panel-footer">
+    <div class="card-footer">
       <div class="row">
-        <div id="prev" class="col-xs-4 text-center control">
-          <span class="glyphicon glyphicon-step-backward" aria-hidden="true"></span>
+        <div id="prev" class="col-4 text-center control" role="button" tabindex="0" aria-label="Previous track">
+          <i class="bi bi-skip-backward-fill" aria-hidden="true"></i>
         </div>
-        <div id="state" class="col-xs-4 text-center control">
-          <span class="glyphicon glyphicon-play" aria-hidden="true"></span>
+        <div id="state" class="col-4 text-center control" role="button" tabindex="0" aria-label="Play/Pause">
+          <i class="bi bi-play-fill" aria-hidden="true"></i>
         </div>
-        <div id="next" class="col-xs-4 text-center control">
-          <span class="glyphicon glyphicon-step-forward" aria-hidden="true"></span>
+        <div id="next" class="col-4 text-center control" role="button" tabindex="0" aria-label="Next track">
+          <i class="bi bi-skip-forward-fill" aria-hidden="true"></i>
         </div>
       </div>
     </div>
   </div>
+  <script nonce="a1b2c3d4" src="../node_modules/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
   <script nonce="a1b2c3d4" src="index.js"></script>
 </body>
 </html>
