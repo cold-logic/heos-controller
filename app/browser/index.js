@@ -65,17 +65,28 @@ $(function() {
 
   // Controller button click highlights
   $('.control').on('mousedown mouseup', function(e){
-    $(this).css('background-color', (e.type == 'mousedown' ? '#C2C2C2' : ''));
+    $(this).css('background-color', (e.type == 'mousedown' ? 'var(--bs-gray-300)' : ''));
   });
 
-  // Click events
+  // Click and keyboard events
   const clickSelectors = [
     ui.refresh.sel,
     ui.prev.sel,
     ui.state.sel,
     ui.next.sel
   ].join(',');
-  $(document).on('click', clickSelectors, function (e) {
+  
+  // Handle both click and keyboard (Enter/Space) events
+  $(document).on('click keydown', clickSelectors, function (e) {
+    // For keyboard events, only respond to Enter or Space
+    if (e.type === 'keydown' && !(e.key === 'Enter' || e.key === ' ')) {
+      return;
+    }
+    
+    // Prevent default for space key to avoid scrolling
+    if (e.key === ' ') {
+      e.preventDefault();
+    }
     const $this = $(this);
     const pid = ui.speaker.$.find(':selected').data('pid');
     if ($this.is(ui.refresh.sel)) {
@@ -85,7 +96,16 @@ $(function() {
       playPrev(pid);
     }
     if ($this.is(ui.state.sel)) {
-      const state = ui.state.$.find('.glyphicon').attr('class').split('-')[1];
+      const iconElement = ui.state.$.find('i');
+      const iconClass = iconElement.length > 0 ? iconElement.attr('class') || '' : '';
+      let state;
+      if (iconClass.includes('bi-play-fill')) {
+        state = 'play';
+      } else if (iconClass.includes('bi-pause-fill')) {
+        state = 'pause';
+      } else {
+        state = 'play'; // default fallback
+      }
       setState(pid, state);
     }
     if ($this.is(ui.next.sel)) {
@@ -275,9 +295,20 @@ function populateVolume(pid, level) {
 function populateState (pid, state) {
   lastCommand = 'populateState';
   if (ui.speaker.$.children().filter(':selected').data('pid') == pid) {
-    ui.state.$.find('.glyphicon')
-      .removeClass('glyphicon-play glyphicon-pause glyphicon-stop')
-      .addClass('glyphicon-' + toggleState(state));
+    const icon = ui.state.$.find('i');
+    const newState = toggleState(state);
+    
+    // Remove all possible Bootstrap Icon classes
+    icon.removeClass('bi-play-fill bi-pause-fill bi-stop-fill');
+    
+    // Add the appropriate Bootstrap Icon class
+    if (newState === 'play') {
+      icon.addClass('bi-play-fill');
+    } else if (newState === 'pause') {
+      icon.addClass('bi-pause-fill');
+    } else if (newState === 'stop') {
+      icon.addClass('bi-stop-fill');
+    }
   }
 }
 
