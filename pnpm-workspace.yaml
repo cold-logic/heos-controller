@@ -1,2 +1,6 @@
 packages:
-  - 'app'
+  - app
+
+onlyBuiltDependencies:
+  - electron
+  - electron-winstaller

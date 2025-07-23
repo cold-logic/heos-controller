@@ -12,7 +12,7 @@ importers:
         specifier: ^37.2.4
         version: 37.2.4
       electron-builder:
-        specifier: ^26.0.12
+        specifier: 26.0.12
         version: 26.0.12(electron-builder-squirrel-windows@26.0.12)
       env-cmd:
         specifier: ^10.1.0
@@ -160,9 +160,6 @@ packages:
 
   '@types/node@22.16.5':
     resolution: {integrity: sha512-bJFoMATwIGaxxx8VJPeM8TonI8t579oRvgAuT8zFugJsJZgzqv0Fu8Mhp68iecjzG7cnN3mO2dJQ5uUM2EFrgQ==}
-
-  '@types/node@24.1.0':
-    resolution: {integrity: sha512-ut5FthK5moxFKH2T1CUOC6ctR67rQRvvHdFLCD2Ql6KXmMuCrjsSsRI9UsLCm9M18BMwClv4pn327UvB7eeO1w==}
 
   '@types/plist@3.0.5':
     resolution: {integrity: sha512-E6OCaRmAe4WDmWNsL/9RMqdkkzDCY1etutkflWk4c+AcjDU07Pcz1fQwTX0TQz+Pxqn9i4L1TU3UFpjnrcDgxA==}
@@ -1260,9 +1257,6 @@ packages:
   undici-types@6.21.0:
     resolution: {integrity: sha512-iwDZqg0QAGrg9Rav5H4n0M64c3mkR59cJ6wQp+7C4nI0gsmExaedaYLNO44eT4AtBBwjbTiGPMlt2Md0T9H9JQ==}
 
-  undici-types@7.8.0:
-    resolution: {integrity: sha512-9UJ2xGDvQ43tYyVMpuHlsgApydB8ZKfVYTsLDhXkFL/6gfkp+U8xTGdh8pMJv1SpZna0zxG1DwsKZsreLbXBxw==}
-
   unique-filename@2.0.1:
     resolution: {integrity: sha512-ODWHtkkdx3IAR+veKxFV+VBkUMcN+FaqzUUd7IZzt+0zhDZFPFxhlqwPF3YQvMHx1TD0tdgYl+kuPnJ8E6ql7A==}
     engines: {node: ^12.13.0 || ^14.15.0 || >=16.0.0}
@@ -1435,7 +1429,7 @@ snapshots:
 
   '@electron/universal@2.0.1':
     dependencies:
-      '@electron/asar': 3.2.18
+      '@electron/asar': 3.4.1
       '@malept/cross-spawn-promise': 2.0.0
       debug: 4.4.1
       dir-compare: 4.2.0
@@ -1520,7 +1514,7 @@ snapshots:
 
   '@types/fs-extra@9.0.13':
     dependencies:
-      '@types/node': 24.1.0
+      '@types/node': 22.16.5
 
   '@types/http-cache-semantics@4.0.4': {}
 
@@ -1534,13 +1528,9 @@ snapshots:
     dependencies:
       undici-types: 6.21.0
 
-  '@types/node@24.1.0':
-    dependencies:
-      undici-types: 7.8.0
-
   '@types/plist@3.0.5':
     dependencies:
-      '@types/node': 24.1.0
+      '@types/node': 22.16.5
       xmlbuilder: 15.1.1
     optional: true
 
@@ -2788,8 +2778,6 @@ snapshots:
   typescript@5.8.3: {}
 
   undici-types@6.21.0: {}
-
-  undici-types@7.8.0: {}
 
   unique-filename@2.0.1:
     dependencies:
