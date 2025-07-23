@@ -96,7 +96,8 @@ $(function() {
       playPrev(pid);
     }
     if ($this.is(ui.state.sel)) {
-      const iconClass = ui.state.$.find('i').attr('class');
+      const iconElement = ui.state.$.find('i');
+      const iconClass = iconElement.length > 0 ? iconElement.attr('class') || '' : '';
       let state;
       if (iconClass.includes('bi-play-fill')) {
         state = 'play';
