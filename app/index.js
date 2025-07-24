@@ -1,7 +1,12 @@
 // Vendor deps
 const {app, BrowserWindow, Menu} = require('electron');
-const log = require('electron-log')
 const {autoUpdater} = require('electron-updater')
+
+const log = {
+  info: console.log,
+  warn: console.warn,
+  error: console.error
+};
 
 // Local deps
 const menu = require('./menu.js')
