@@ -1,18 +1,19 @@
 {
   "name": "heos-controller",
-  "version": "1.0.11",
+  "version": "1.0.12",
   "description": "Controller for Denon Heos speakers",
   "repository": "https://github.com/cold-logic/heos-controller",
   "main": "app/index.js",
   "scripts": {
-    "pack": "env-cmd electron-builder --dir",
-    "dist": "env-cmd electron-builder",
-    "build": "env-cmd electron-builder build",
-    "package-linux": "env-cmd electron-builder --linux",
-    "package-mac": "env-cmd electron-builder --mac --arm64 --x64",
-    "package-win": "env-cmd electron-builder --win --ia32 --x64",
+    "sync-version": "node sync-version.js",
+    "pack": "pnpm run sync-version && env-cmd electron-builder",
+    "dist": "pnpm run sync-version && env-cmd electron-builder",
+    "build": "pnpm run sync-version && env-cmd electron-builder build",
+    "package-linux": "pnpm run sync-version && env-cmd electron-builder --linux",
+    "package-mac": "pnpm run sync-version && env-cmd electron-builder --mac --arm64 --x64",
+    "package-win": "pnpm run sync-version && env-cmd electron-builder --win --ia32 --x64",
     "release": "build",
-    "start": "electron app",
+    "start": "pnpm run sync-version && electron app",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Christopher Davison",
@@ -21,26 +22,39 @@
   "build": {
     "appId": "me.christopherd.heos-controller",
     "productName": "Heos Controller",
+    "directories": {
+      "app": "app",
+      "output": "dist",
+      "buildResources": "build"
+    },
     "mac": {
       "icon": "icon.icns",
       "category": "public.app-category.music",
-      "publish": [
-        "github"
-      ]
+      "identity": null
     },
     "linux": {
       "icon": "icon.icns",
       "category": "public.app-category.music",
-      "target": "AppImage",
-      "publish": [
-        "github"
-      ]
+      "target": "AppImage"
+    },
+    "publish": {
+      "provider": "generic",
+      "url": "https://github.com/cold-logic/heos-controller/releases/latest/download/"
     }
   },
   "dependencies": {
-    "electron": "^37.3.1",
-    "electron-builder": "^26.0.12",
-    "env-cmd": "^10.1.0"
+    "bootstrap": "^5.3.8",
+    "bootstrap-icons": "^1.11.3",
+    "electron-log": "^5.4.3",
+    "electron-updater": "^6.6.2",
+    "jquery": "^3.7.1",
+    "jquery-knob": "ssh://git@github.com:aterrien/jQuery-Knob.git",
+    "jsonfile": "6.0.1"
+  },
+  "devDependencies": {
+    "electron": "^39.2.7",
+    "electron-builder": "^26.3.6",
+    "env-cmd": "^11.0.0"
   },
   "workspaces": [
     "app"

@@ -1,13 +1,18 @@
+const path = require('path');
+
 // Vendor deps
 const {app, BrowserWindow, Menu} = require('electron');
-const log = require('electron-log')
-const {autoUpdater} = require('electron-updater')
+const log = require('electron-log/main');
+const {autoUpdater} = require('electron-updater');
 
 // Local deps
 const menu = require('./menu.js')
 
 autoUpdater.logger = log;
 autoUpdater.logger.transports.file.level = 'info';
+
+// Initialize the logger to be available in renderer process
+log.initialize();
 log.info('App starting...');
 
 // Keep a global reference of the window object, if you don't, the window will
@@ -24,6 +29,9 @@ app.on("window-all-closed", function() {
 });
 
 // Handle Updates
+autoUpdater.autoDownload = false;
+autoUpdater.autoInstallOnAppQuit = false;
+
 autoUpdater.on('checking-for-update', () => {
   log.info('Checking for update...');
 })
@@ -43,16 +51,8 @@ autoUpdater.on('download-progress', (progressObj) => {
   log.info(log_message);
 })
 autoUpdater.on('update-downloaded', (info) => {
-  log.info('Update downloaded; will install in 5 seconds');
+  log.info('Update downloaded');
 });
-autoUpdater.on('update-downloaded', (info) => {
-  // Wait 5 seconds, then quit and install
-  // In your application, you don't need to wait 5 seconds.
-  // You could call autoUpdater.quitAndInstall(); immediately
-  setTimeout(function() {
-    autoUpdater.quitAndInstall();
-  }, 5000)
-})
 
 // This method will be called when Electron has done everything
 // initialization and ready for creating browser windows.
@@ -70,7 +70,7 @@ app.on("ready", function() {
     show: false,
     webPreferences: {
       contextIsolation: false,
-      nodeIntegration: true
+      nodeIntegration: true,
     }
   });
 
