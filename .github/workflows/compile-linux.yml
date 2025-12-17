@@ -5,6 +5,16 @@ on:
     branches: [ compile-exe, main ]
   pull_request:
     branches: [ compile-exe, main ]
+  release:
+    types: [created]
+  workflow_dispatch:
+    inputs:
+      tag_name:
+        description: 'Tag name for release (e.g. v1.0.12)'
+        required: false
+
+permissions:
+  contents: write
 
 jobs:
 
@@ -58,3 +68,15 @@ jobs:
       with:
         name: linux-app
         path: dist/*.AppImage
+
+    - name: Upload to Release
+      uses: softprops/action-gh-release@v1
+      if: github.event_name == 'release' || github.event_name == 'workflow_dispatch'
+      with:
+        tag_name: ${{ inputs.tag_name }}
+        files: |
+          dist/*.AppImage
+          dist/*.deb
+          dist/*.rpm
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
