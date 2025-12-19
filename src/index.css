@@ -1,0 +1,59 @@
+body {
+  overflow: hidden;
+}
+
+#main-card > .card-body {
+  height: 100%;
+}
+
+#main-card > .card-body > .container-fluid {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+#main-card {
+  display: flex;
+  flex-direction: column;
+  /* justify-content: space-between; */
+  height: 100vh;
+  margin: 0;
+}
+
+.volume-row {
+  /* Bootstrap utilities now handle flexbox properties */
+  height: 100%;
+}
+
+.volume-dial {
+  display: flex;
+  height: 100%;
+  justify-content: center;
+  width: 100%;
+}
+
+.volume-dial > div {
+  position: absolute;
+}
+
+.card-footer {
+  margin-top: auto;
+  padding: 0px;
+}
+
+.control {
+  display: flex;
+  height: 41px;
+  justify-content: center;
+  align-items: center;
+}
+
+.control:hover {
+  background-color: var(--bs-gray-200);
+}
+
+.control:focus {
+  background-color: var(--bs-gray-300);
+  outline: 2px solid var(--bs-primary);
+  outline-offset: -2px;
+}
