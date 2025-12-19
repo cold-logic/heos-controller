@@ -1,0 +1,31 @@
+# Node.js
+.pnpm-store/
+node_modules/
+dist/
+npm-debug.log
+yarn-error.log
+pnpm-debug.log*
+
+# Rust
+target/
+**/*.rs.bk
+
+# Tauri
+src-tauri/target/
+src-tauri/gen/
+src-tauri/src-tauri.conf.json
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Env
+.env
+.env.*
+! .env.example

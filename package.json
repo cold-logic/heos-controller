@@ -1,0 +1,31 @@
+{
+  "name": "heos-controller",
+  "version": "1.0.12",
+  "description": "Controller for Denon Heos speakers",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tauri build",
+    "build:vite": "vite build",
+    "preview": "vite preview",
+    "tauri": "tauri",
+    "posttauri": "pnpm run sign",
+    "sign": "node scripts/sign.js",
+    "open": "open src-tauri/target/release/bundle/macos/Heos\\ Controller.app"
+  },
+  "dependencies": {
+    "@tauri-apps/api": "^2.0.0",
+    "@tauri-apps/plugin-shell": "^2.0.0",
+    "bootstrap": "^5.3.3",
+    "bootstrap-icons": "^1.11.3",
+    "jquery": "^3.7.1",
+    "jquery-knob": "ssh://git@github.com:aterrien/jQuery-Knob.git"
+  },
+  "devDependencies": {
+    "@tauri-apps/cli": "^2.0.0",
+    "vite": "^5.0.0"
+  },
+  "license": "ISC",
+  "author": "Christopher Davison"
+}
