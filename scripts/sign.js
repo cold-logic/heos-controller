@@ -2,18 +2,22 @@ import { execSync } from 'child_process';
 import { platform } from 'os';
 import { existsSync } from 'fs';
 
-const MAC_BUNDLE_PATH = 'src-tauri/target/release/bundle/macos/Heos Controller.app';
+const UNIVERSAL_BUNDLE_PATH = 'src-tauri/target/universal-apple-darwin/release/bundle/macos/Heos Controller.app';
+const RELEASE_BUNDLE_PATH = 'src-tauri/target/release/bundle/macos/Heos Controller.app';
 const ENTITLEMENTS_PATH = 'src-tauri/Entitlements.plist';
 
 function signMacOS() {
-    if (!existsSync(MAC_BUNDLE_PATH)) {
-        console.warn('⚠️  No macOS bundle found at', MAC_BUNDLE_PATH);
+    // Try universal binary first, then fall back to regular release build
+    const bundlePath = existsSync(UNIVERSAL_BUNDLE_PATH) ? UNIVERSAL_BUNDLE_PATH : RELEASE_BUNDLE_PATH;
+
+    if (!existsSync(bundlePath)) {
+        console.warn('⚠️  No macOS bundle found. Build the app first with: pnpm run build');
         return;
     }
 
-    console.log('🔏 Signing macOS bundle with entitlements...');
+    console.log(`🔏 Signing macOS bundle: ${bundlePath}`);
     try {
-        execSync(`codesign --force --deep --sign - --entitlements ${ENTITLEMENTS_PATH} ${MAC_BUNDLE_PATH}`, { stdio: 'inherit' });
+        execSync(`codesign --force --deep --sign - --entitlements ${ENTITLEMENTS_PATH} "${bundlePath}"`, { stdio: 'inherit' });
         console.log('✅ macOS App Bundle Signed Successfully');
     } catch (error) {
         console.error('❌ Failed to sign macOS bundle:', error.message);
