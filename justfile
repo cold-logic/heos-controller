@@ -65,3 +65,18 @@ info:
 # Dev with auto-reload
 watch:
     pnpm run dev
+
+# Check for outdated dependencies (both npm and cargo)
+check-updates:
+    @echo "Checking npm/pnpm dependencies..."
+    pnpm outdated || true
+    @echo "\nChecking Rust/Cargo dependencies..."
+    cd src-tauri && cargo update --dry-run
+
+# Update all dependencies (interactive)
+upgrade:
+    @echo "Updating npm/pnpm dependencies..."
+    pnpm update --latest --interactive
+    @echo "\nUpdating Rust/Cargo dependencies..."
+    cd src-tauri && cargo update
+    @echo "\nDependencies updated! Run 'just build' to verify everything works."
