@@ -270,7 +270,7 @@ pub fn run() {
                 ],
             ).unwrap();
 
-            let devtools_i = MenuItem::with_id(app, "devtools", "Toggle Developer Tools", true, None::<&str>).unwrap();
+            let devtools_i = MenuItem::with_id(app, "devtools", "Toggle Developer Tools", true, Some("CmdOrCtrl+Option+I")).unwrap();
             let view_menu = Submenu::with_items(
                 app,
                 "View",
