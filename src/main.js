@@ -10,6 +10,29 @@ import './index.css';
 // jQuery Knob needs global jQuery
 window.$ = window.jQuery = $;
 
+// Keep data-bs-theme in sync with the OS preference at runtime
+const themeMedia = window.matchMedia('(prefers-color-scheme: dark)');
+themeMedia.addEventListener('change', onThemeChange);
+window.addEventListener('unload', () => themeMedia.removeEventListener('change', onThemeChange));
+
+function onThemeChange(e) {
+  document.documentElement.setAttribute('data-bs-theme', e.matches ? 'dark' : 'light');
+  updateKnobTheme();
+}
+
+function knobBgColor() {
+  return document.documentElement.getAttribute('data-bs-theme') === 'dark'
+    ? '#555555'
+    : '#EEEEEE';
+}
+
+function updateKnobTheme() {
+  if (ui) {
+    ui.dial.$.trigger('configure', { bgColor: knobBgColor() });
+    ui.dial.$.trigger('change');
+  }
+}
+
 // Wait for knob plugin to load before initializing UI
 let ui, lastCommand;
 
@@ -41,6 +64,7 @@ function initializeApp() {
 
   const knobConfig = {
     fgColor: '#66CC66',
+    bgColor: knobBgColor(),
     angleOffset: -125,
     angleArc: 250,
     width: '100%',
