@@ -19,7 +19,7 @@
     "@tauri-apps/plugin-shell": "^2.0.0",
     "bootstrap": "^5.3.3",
     "bootstrap-icons": "^1.11.3",
-    "jquery": "^3.7.1",
+    "jquery": "^4.0.0",
     "jquery-knob": "ssh://git@github.com:aterrien/jQuery-Knob.git"
   },
   "devDependencies": {
