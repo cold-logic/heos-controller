@@ -46,7 +46,7 @@ export class HeosService extends EventEmitter {
       const BROADCAST_ADDRS = this.broadcast_addresses();
       const message = Buffer.from(
         'M-SEARCH * HTTP/1.1\r\n' +
-        `HOST: ${HEOS_BROADCAST_ADDR}:1900\r\n' +
+        'HOST: ' + HEOS_BROADCAST_ADDR + ':1900\r\n' +
         'MAN: "ssdp:discover"\r\n' +
         'ST: urn:schemas-denon-com:device:ACT-Denon:1\r\n' +
         'MX: 1\r\n' +
