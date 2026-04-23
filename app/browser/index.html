@@ -5,22 +5,23 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta http-equiv="Content-Security-Policy"
     content="script-src
-    'sha256-RInT6N5e+S6307779U8X8u2mI6rFvWf90='
+    'self'
+    'sha256-Sofy9JCsccNlWq+ge2rU8DdPtdGQu/JHNBPq7buagak='
     'nonce-a1b2c3d4'"
   />
   <title>Heos Controller</title>
   <script type="importmap" nonce="a1b2c3d4">
   {
     "imports": {
-      "jquery": "../../node_modules/jquery/dist-module/jquery.module.js",
-      "bootstrap": "../../node_modules/bootstrap/dist/js/bootstrap.esm.js",
-      "@popperjs/core": "../../node_modules/@popperjs/core/dist/umd/popper.min.js",
-      "jquery-knob": "../../node_modules/jquery-knob/dist/jquery.knob.min.js"
+      "jquery": "../node_modules/jquery/dist-module/jquery.module.js",
+      "bootstrap": "../node_modules/bootstrap/dist/js/bootstrap.esm.js",
+      "@popperjs/core": "../node_modules/@popperjs/core/dist/esm/popper.js",
+      "jquery-knob": "../node_modules/jquery-knob/dist/jquery.knob.min.js"
     }
   }
   </script>
-  <link rel="stylesheet" href="../../node_modules/bootstrap/dist/css/bootstrap.min.css">
-  <link rel="stylesheet" href="../../node_modules/bootstrap-icons/font/bootstrap-icons.css">
+  <link rel="stylesheet" href="../node_modules/bootstrap/dist/css/bootstrap.min.css">
+  <link rel="stylesheet" href="../node_modules/bootstrap-icons/font/bootstrap-icons.css">
   <link rel="stylesheet" href="index.css">
   <!-- Fix for https://bugs.chromium.org/p/chromium/issues/detail?id=641509 -->
   <style> ::selection { background: white; /* WebKit/Blink Browsers */ } </style>

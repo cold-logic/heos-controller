@@ -74,8 +74,8 @@ app.on("ready", function() {
     height: 413,
     show: false,
     webPreferences: {
-      contextIsolation: true,
-      nodeIntegration: false,
+      contextIsolation: false,
+      nodeIntegration: true,
       sandbox: false,
       preload: path.join(__dirname, 'preload.cjs')
     }
