@@ -24,16 +24,6 @@ overrides:
 importers:
 
   .:
-    dependencies:
-      electron-log:
-        specifier: ^5.4.3
-        version: 5.4.3
-      electron-updater:
-        specifier: ^6.8.3
-        version: 6.8.3
-      jsonfile:
-        specifier: 6.2.1
-        version: 6.2.1
     devDependencies:
       electron:
         specifier: ^41.3.0
@@ -56,12 +46,21 @@ importers:
       bootstrap-icons:
         specifier: ^1.11.3
         version: 1.13.1
+      electron-log:
+        specifier: ^5.4.3
+        version: 5.4.3
+      electron-updater:
+        specifier: ^6.8.3
+        version: 6.8.3
       jquery:
         specifier: ^4.0.0
         version: 4.0.0
       jquery-knob:
         specifier: ssh://git@github.com:aterrien/jQuery-Knob.git
         version: https://codeload.github.com/aterrien/jQuery-Knob/tar.gz/755309e933d326ffaa5a2d758dc377147b766515
+      jsonfile:
+        specifier: 6.2.1
+        version: 6.2.1
 
 packages:
 

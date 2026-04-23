@@ -42,11 +42,7 @@
       "url": "https://github.com/cold-logic/heos-controller/releases/latest/download/"
     }
   },
-  "dependencies": {
-    "electron-log": "^5.4.3",
-    "electron-updater": "^6.8.3",
-    "jsonfile": "6.2.1"
-  },
+  "dependencies": {},
   "devDependencies": {
     "electron": "^41.3.0",
     "electron-builder": "26.8.2",

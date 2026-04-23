@@ -10,7 +10,10 @@
   "dependencies": {
     "bootstrap": "^5.3.8",
     "bootstrap-icons": "^1.11.3",
+    "electron-log": "^5.4.3",
+    "electron-updater": "^6.8.3",
     "jquery": "^4.0.0",
-    "jquery-knob": "ssh://git@github.com:aterrien/jQuery-Knob.git"
+    "jquery-knob": "ssh://git@github.com:aterrien/jQuery-Knob.git",
+    "jsonfile": "6.2.1"
   }
 }
