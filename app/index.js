@@ -2,16 +2,19 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 
 // Vendor deps
-import { app, BrowserWindow, Menu } from 'electron';
+import { app, BrowserWindow, Menu, ipcMain } from 'electron';
 import log from 'electron-log/main.js';
 import pkg from 'electron-updater';
 const { autoUpdater } = pkg;
 
 // Local deps
 import menu from './menu.js';
+import { HeosService } from './heos-service.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
+
+const heosService = new HeosService();
 
 autoUpdater.logger = log;
 autoUpdater.logger.transports.file.level = 'info';
@@ -26,11 +29,7 @@ let mainWindow;
 
 // Quit when all windows are closed.
 app.on("window-all-closed", function() {
-  // On OS X it is common for applications and their menu bar
-  // to stay active until the user quits explicitly with Cmd + Q
-  // if (process.platform != "darwin") {
     app.quit();
-  // }
 });
 
 // Handle Updates
@@ -74,10 +73,10 @@ app.on("ready", function() {
     height: 413,
     show: false,
     webPreferences: {
-      contextIsolation: false,
-      nodeIntegration: true,
-      sandbox: false,
-      preload: path.join(__dirname, 'preload.cjs')
+      contextIsolation: true,
+      nodeIntegration: false,
+      sandbox: true,
+      preload: path.join(__dirname, 'preload.mjs')
     }
   });
 
@@ -88,14 +87,29 @@ app.on("ready", function() {
   mainWindow.loadFile('browser/index.html');
   mainWindow.show();
 
-  // Open the dev tools
-  // mainWindow.webContents.openDevTools();
+  // Set up Heos Service event forwarding
+  heosService.on('players', (payload) => {
+    mainWindow.webContents.send('heos:players', payload);
+  });
+  heosService.on('state', (data) => {
+    mainWindow.webContents.send('heos:state', data);
+  });
+  heosService.on('volume', (data) => {
+    mainWindow.webContents.send('heos:volume', data);
+  });
+
+  // Set up IPC handlers
+  ipcMain.handle('heos:discover', () => heosService.discover());
+  ipcMain.handle('heos:getPlayers', () => heosService.getPlayers());
+  ipcMain.handle('heos:getVolume', (event, pid) => heosService.getVolume(pid));
+  ipcMain.handle('heos:getState', (event, pid) => heosService.getState(pid));
+  ipcMain.handle('heos:setVolume', (event, pid, level) => heosService.setVolume(pid, level));
+  ipcMain.handle('heos:setState', (event, pid, state) => heosService.setState(pid, state));
+  ipcMain.handle('heos:playPrev', (event, pid) => heosService.playPrev(pid));
+  ipcMain.handle('heos:playNext', (event, pid) => heosService.playNext(pid));
 
   // Emitted when the window is closed.
   mainWindow.on("closed", function() {
-    // Dereference the window object, usually you would store windows
-    // in an array if your app supports multi windows, this is the time
-    // when you should delete the corresponding element.
     mainWindow = null;
   });
 });
