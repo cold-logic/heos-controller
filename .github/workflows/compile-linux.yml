@@ -21,16 +21,19 @@ jobs:
   build-linux:
     runs-on: ubuntu-latest
     
+    env:
+      FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
     steps:
     - uses: actions/checkout@v4
     
     - name: Use Node.js
       uses: actions/setup-node@v4
       with:
-        node-version: 22
+        node-version: 24
         
     - name: Install pnpm
-      uses: pnpm/action-setup@v3
+      uses: pnpm/action-setup@v4
       with:
         version: 10
         run_install: false
@@ -58,10 +61,10 @@ jobs:
     - name: Build Electron App
       run: |
         # Build the Electron app
-        npm run build
+        pnpm build
         
         # Package the app into a Linux app
-        npm run package-linux
+        pnpm package-linux
         
     - name: Upload Artifact
       uses: actions/upload-artifact@v4
