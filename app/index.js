@@ -1,12 +1,17 @@
-const path = require('path');
+import path from 'path';
+import { fileURLToPath } from 'url';
 
 // Vendor deps
-const {app, BrowserWindow, Menu} = require('electron');
-const log = require('electron-log/main');
-const {autoUpdater} = require('electron-updater');
+import { app, BrowserWindow, Menu } from 'electron';
+import log from 'electron-log/main.js';
+import pkg from 'electron-updater';
+const { autoUpdater } = pkg;
 
 // Local deps
-const menu = require('./menu.js')
+import menu from './menu.js';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 autoUpdater.logger = log;
 autoUpdater.logger.transports.file.level = 'info';
