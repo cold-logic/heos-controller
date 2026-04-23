@@ -2,7 +2,10 @@
 
 import $ from 'jquery';
 window.$ = window.jQuery = $;
-import 'jquery-knob';
+
+// Dynamic import to ensure window.jQuery is set before knob loads
+await import('jquery-knob');
+const bootstrap = await import('bootstrap');
 
 const { dgram, net, os } = window.nodeAPI;
 

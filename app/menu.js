@@ -1,8 +1,8 @@
-const {app, Menu, BrowserWindow} = require("electron")
+import { app, Menu, shell } from 'electron';
 
-const isMac = process.platform === 'darwin'
+const isMac = process.platform === 'darwin';
 
-module.exports = exports = Menu.buildFromTemplate([
+const menu = Menu.buildFromTemplate([
   ...(isMac ? [{
     label: app.name,
     submenu: [
@@ -85,9 +85,10 @@ module.exports = exports = Menu.buildFromTemplate([
     submenu: [{
       label: "Documentation",
       click: async () => {
-        const { shell } = require('electron');
         await shell.openExternal("https://github.com/cold-logic/heos-controller/wiki");
       }
     }]
   }
 ]);
+
+export default menu;

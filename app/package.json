@@ -1,10 +1,11 @@
 {
   "productName": "Heos Controller",
   "name": "heos-controller",
+  "type": "module",
   "main": "index.js",
   "private": true,
   "license": "ISC",
-  "version": "1.0.13",
+  "version": "1.0.14",
   "author": "Christopher Davison",
   "description": "Controller for Denon Heos speakers",
   "dependencies": {
