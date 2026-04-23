@@ -21,9 +21,6 @@ jobs:
   build-windows:
     runs-on: windows-latest
     
-    env:
-      FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
-
     steps:
     - uses: actions/checkout@v6
     
@@ -33,7 +30,7 @@ jobs:
         node-version: 24
         
     - name: Install pnpm
-      uses: pnpm/action-setup@v4
+      uses: pnpm/action-setup@v6
       with:
         run_install: false
 
@@ -54,7 +51,7 @@ jobs:
       run: pnpm install --frozen-lockfile
         
     - name: Setup MSBuild
-      uses: microsoft/setup-msbuild@v2
+      uses: microsoft/setup-msbuild@v3
 
     - name: Create .env file
       run: |
@@ -69,13 +66,13 @@ jobs:
         pnpm package-win
         
     - name: Upload Artifact
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v7
       with:
         name: windows-executable
         path: dist/*.exe
 
     - name: Upload to Release
-      uses: softprops/action-gh-release@v1
+      uses: softprops/action-gh-release@v3
       if: github.event_name == 'release' || github.event_name == 'workflow_dispatch'
       with:
         tag_name: ${{ inputs.tag_name }}
