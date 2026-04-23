@@ -1,7 +1,7 @@
 const { contextBridge } = require('electron');
-const dgram = require('node:dgram');
-const net = require('node:net');
-const os = require('node:os');
+const dgram = require('dgram');
+const net = require('net');
+const os = require('os');
 
 contextBridge.exposeInMainWorld('nodeAPI', {
   dgram: {

@@ -5,7 +5,7 @@
   "main": "index.js",
   "private": true,
   "license": "ISC",
-  "version": "1.0.14",
+  "version": "1.0.15",
   "author": "Christopher Davison",
   "description": "Controller for Denon Heos speakers",
   "dependencies": {
