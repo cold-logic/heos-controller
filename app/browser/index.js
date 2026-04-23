@@ -1,11 +1,12 @@
 /* global $ */
 
-window.$ = window.jQuery = require('jquery');
-require('jquery-knob/dist/jquery.knob.min.js');
+import $ from 'jquery';
+window.$ = window.jQuery = $;
+import 'jquery-knob';
 
-const dgram = require('node:dgram'); // dgram is UDP
-const net = require('node:net');
-const os = require('node:os'); 
+import dgram from 'node:dgram'; // dgram is UDP
+import net from 'node:net';
+import os from 'node:os'; 
 
 const HEOS_BROADCAST_ADDR = "239.255.255.250";
 let connection, ui, lastCommand, discovery_interval;

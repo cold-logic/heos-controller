@@ -6,5 +6,11 @@
   "license": "ISC",
   "version": "1.0.13",
   "author": "Christopher Davison",
-  "description": "Controller for Denon Heos speakers"
+  "description": "Controller for Denon Heos speakers",
+  "dependencies": {
+    "bootstrap": "^5.3.8",
+    "bootstrap-icons": "^1.11.3",
+    "jquery": "^4.0.0",
+    "jquery-knob": "ssh://git@github.com:aterrien/jQuery-Knob.git"
+  }
 }
