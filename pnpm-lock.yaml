@@ -15,16 +15,16 @@ importers:
         specifier: ^2.3.5
         version: 2.3.5
       bootstrap:
-        specifier: ^5.3.3
+        specifier: ^5.3.8
         version: 5.3.8(@popperjs/core@2.11.8)
       bootstrap-icons:
-        specifier: ^1.11.3
+        specifier: ^1.13.1
         version: 1.13.1
       jquery:
         specifier: ^4.0.0
         version: 4.0.0
       jquery-knob:
-        specifier: ssh://git@github.com:aterrien/jQuery-Knob.git
+        specifier: github:aterrien/jQuery-Knob
         version: https://codeload.github.com/aterrien/jQuery-Knob/tar.gz/755309e933d326ffaa5a2d758dc377147b766515
     devDependencies:
       '@tauri-apps/cli':

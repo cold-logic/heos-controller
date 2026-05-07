@@ -17,10 +17,10 @@
   "dependencies": {
     "@tauri-apps/api": "^2.11.0",
     "@tauri-apps/plugin-shell": "^2.3.5",
-    "bootstrap": "^5.3.3",
-    "bootstrap-icons": "^1.11.3",
+    "bootstrap": "^5.3.8",
+    "bootstrap-icons": "^1.13.1",
     "jquery": "^4.0.0",
-    "jquery-knob": "ssh://git@github.com:aterrien/jQuery-Knob.git"
+    "jquery-knob": "github:aterrien/jQuery-Knob"
   },
   "devDependencies": {
     "@tauri-apps/cli": "^2.11.1",
