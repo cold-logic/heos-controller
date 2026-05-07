@@ -2,6 +2,7 @@ use std::net::SocketAddr;
 use std::sync::Arc;
 use std::time::Duration;
 use tauri::{AppHandle, Emitter, Manager, State};
+use tauri_plugin_store::StoreExt;
 use tokio::io::{AsyncBufReadExt, AsyncWriteExt, BufReader};
 use tokio::net::{TcpStream, UdpSocket};
 use tokio::sync::Mutex as AsyncMutex;
@@ -11,22 +12,69 @@ struct ConnectionState {
     writer: Arc<AsyncMutex<Option<tokio::net::tcp::OwnedWriteHalf>>>,
 }
 
+#[derive(serde::Serialize)]
+struct NetworkInterface {
+    name: String,
+    ip: String,
+}
+
+#[tauri::command]
+async fn get_network_interfaces() -> Result<Vec<NetworkInterface>, String> {
+    let interfaces = get_if_addrs::get_if_addrs().map_err(|e| e.to_string())?;
+    let mut list = Vec::new();
+    for iface in interfaces {
+        if iface.is_loopback() {
+            continue;
+        }
+        if let get_if_addrs::IfAddr::V4(addr) = iface.addr {
+            list.push(NetworkInterface {
+                name: iface.name,
+                ip: addr.ip.to_string(),
+            });
+        }
+    }
+    Ok(list)
+}
 
 const HEOS_BROADCAST_ADDR: &str = "239.255.255.250";
 const HEOS_PORT: u16 = 1900;
 
 #[tauri::command]
 async fn discover_speakers(app: AppHandle) -> Result<(), String> {
-    // Determine valid local IP by "connecting" to an external address
-    let local_ip = match UdpSocket::bind("0.0.0.0:0").await {
-        Ok(s) => {
-            if s.connect("8.8.8.8:80").await.is_ok() {
-                s.local_addr().ok().map(|a| a.ip()).unwrap_or("0.0.0.0".parse().unwrap())
-            } else {
-                "0.0.0.0".parse().unwrap() // Fallback
+    // Check for a preferred network interface in settings
+    let preferred_ip = app.store("settings.json").ok().and_then(|store| {
+        store.get("preferred_interface")
+            .and_then(|v| v.as_str().map(|s| s.to_string()))
+    });
+
+    let local_ip = if let Some(ip) = preferred_ip {
+        if ip != "auto" {
+            ip.parse().map_err(|_| "Invalid IP in settings".to_string())?
+        } else {
+            // Determine valid local IP by "connecting" to an external address
+            match UdpSocket::bind("0.0.0.0:0").await {
+                Ok(s) => {
+                    if s.connect("8.8.8.8:80").await.is_ok() {
+                        s.local_addr().ok().map(|a| a.ip()).unwrap_or("0.0.0.0".parse().unwrap())
+                    } else {
+                        "0.0.0.0".parse().unwrap() // Fallback
+                    }
+                }
+                Err(_) => "0.0.0.0".parse().unwrap(),
             }
         }
-        Err(_) => "0.0.0.0".parse().unwrap(),
+    } else {
+        // Determine valid local IP by "connecting" to an external address
+        match UdpSocket::bind("0.0.0.0:0").await {
+            Ok(s) => {
+                if s.connect("8.8.8.8:80").await.is_ok() {
+                    s.local_addr().ok().map(|a| a.ip()).unwrap_or("0.0.0.0".parse().unwrap())
+                } else {
+                    "0.0.0.0".parse().unwrap() // Fallback
+                }
+            }
+            Err(_) => "0.0.0.0".parse().unwrap(),
+        }
     };
 
     println!("Determined local IP: {}", local_ip);
@@ -218,6 +266,7 @@ async fn send_command(
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     tauri::Builder::default()
+        .plugin(tauri_plugin_store::Builder::new().build())
         .plugin(tauri_plugin_opener::init())
         .setup(|app| {
             #[cfg(debug_assertions)]
@@ -331,7 +380,8 @@ pub fn run() {
         .invoke_handler(tauri::generate_handler![
             discover_speakers,
             connect_speaker,
-            send_command
+            send_command,
+            get_network_interfaces
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

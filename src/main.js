@@ -1,11 +1,14 @@
 
 import { invoke } from '@tauri-apps/api/core';
 import { listen } from '@tauri-apps/api/event';
+import { LazyStore } from '@tauri-apps/plugin-store';
 import $ from 'jquery';
-import 'bootstrap/dist/js/bootstrap.bundle.min.js';
+import * as bootstrap from 'bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap-icons/font/bootstrap-icons.css';
 import './index.css';
+
+const store = new LazyStore('settings.json');
 
 // jQuery Knob needs global jQuery
 window.$ = window.jQuery = $;
@@ -61,6 +64,8 @@ function initializeApp() {
     state: new jQ('#state'),
     next: new jQ('#next')
   };
+
+  const settingsModal = new bootstrap.Modal(document.getElementById('settingsModal'));
 
   const knobConfig = {
     fgColor: '#66CC66',
@@ -127,6 +132,31 @@ function initializeApp() {
       }
       if ($this.is(ui.next.sel)) playNext(pid);
     }
+  });
+
+  $('#settings-btn').on('click', async () => {
+    const interfaces = await invoke('get_network_interfaces');
+    const $select = $('#interface-select');
+    $select.find('option:not([value="auto"])').remove();
+
+    interfaces.forEach(iface => {
+      $select.append(`<option value="${iface.ip}">${iface.name} (${iface.ip})</option>`);
+    });
+
+    const preferred = await store.get('preferred_interface') || 'auto';
+    $select.val(preferred);
+
+    settingsModal.show();
+  });
+
+  $('#save-settings').on('click', async () => {
+    const selected = $('#interface-select').val();
+    await store.set('preferred_interface', selected);
+    await store.save();
+    settingsModal.hide();
+
+    // Trigger fresh scan
+    invoke('discover_speakers');
   });
 
   setupListeners();
