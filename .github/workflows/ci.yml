@@ -1,0 +1,133 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  shellcheck:
+    name: ShellCheck Build Script
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Run ShellCheck
+        uses: ludeeus/action-shellcheck@2.0.0
+        with:
+          scandir: scripts
+
+  script-permissions:
+    name: Verify Script Permissions
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Check tauri-build.sh is executable in git
+        run: |
+          if ! git ls-files -s scripts/tauri-build.sh | grep -q '^100755'; then
+            echo "::error::scripts/tauri-build.sh is not marked executable in git"
+            echo "Fix with: git update-index --chmod=+x scripts/tauri-build.sh"
+            exit 1
+          fi
+          echo "scripts/tauri-build.sh has correct executable permissions ✓"
+
+  frontend:
+    name: Frontend Build Check
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: pnpm/action-setup@v6
+        with:
+          version: 10
+
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 'lts/*'
+          cache: 'pnpm'
+
+      - run: pnpm install
+
+      - name: Build frontend
+        run: pnpm build:vite
+
+  frontend-audit:
+    name: Frontend Security Audit
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: pnpm/action-setup@v6
+        with:
+          version: 10
+
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 'lts/*'
+          cache: 'pnpm'
+
+      - run: pnpm install
+
+      - name: pnpm audit
+        run: pnpm audit --prod
+        continue-on-error: true
+
+  rust:
+    name: Rust Backend Checks
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          lfs: true
+
+      - name: Install dependencies (Ubuntu)
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libwebkit2gtk-4.1-dev libappindicator3-dev librsvg2-dev patchelf libfuse2t64
+
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          components: clippy, rustfmt
+
+      - uses: swatinem/rust-cache@v2
+        with:
+          workspaces: src-tauri -> target
+
+      - name: Cargo fmt
+        run: cargo fmt --check
+        working-directory: src-tauri
+
+      - name: Cargo check
+        run: cargo check
+        working-directory: src-tauri
+
+      - name: Cargo clippy
+        run: cargo clippy -- -D warnings
+        working-directory: src-tauri
+
+      - name: Cargo test
+        run: cargo test
+        working-directory: src-tauri
+
+  rust-audit:
+    name: Rust Security Audit
+    runs-on: ubuntu-latest
+    # Vulnerabilities in transitive Tauri deps (quick-xml) cannot be fixed
+    # without a Tauri version bump. Run as informational until then.
+    continue-on-error: true
+    permissions:
+      checks: write
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: cargo audit
+        uses: rustsec/audit-check@v2
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          working-directory: src-tauri
