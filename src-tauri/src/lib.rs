@@ -43,19 +43,24 @@ const HEOS_PORT: u16 = 1900;
 async fn discover_speakers(app: AppHandle) -> Result<(), String> {
     // Check for a preferred network interface in settings
     let preferred_ip = app.store("settings.json").ok().and_then(|store| {
-        store.get("preferred_interface")
+        store
+            .get("preferred_interface")
             .and_then(|v| v.as_str().map(|s| s.to_string()))
     });
 
     let local_ip = if let Some(ip) = preferred_ip {
         if ip != "auto" {
-            ip.parse().map_err(|_| "Invalid IP in settings".to_string())?
+            ip.parse()
+                .map_err(|_| "Invalid IP in settings".to_string())?
         } else {
             // Determine valid local IP by "connecting" to an external address
             match UdpSocket::bind("0.0.0.0:0").await {
                 Ok(s) => {
                     if s.connect("8.8.8.8:80").await.is_ok() {
-                        s.local_addr().ok().map(|a| a.ip()).unwrap_or("0.0.0.0".parse().unwrap())
+                        s.local_addr()
+                            .ok()
+                            .map(|a| a.ip())
+                            .unwrap_or("0.0.0.0".parse().unwrap())
                     } else {
                         "0.0.0.0".parse().unwrap() // Fallback
                     }
@@ -68,7 +73,10 @@ async fn discover_speakers(app: AppHandle) -> Result<(), String> {
         match UdpSocket::bind("0.0.0.0:0").await {
             Ok(s) => {
                 if s.connect("8.8.8.8:80").await.is_ok() {
-                    s.local_addr().ok().map(|a| a.ip()).unwrap_or("0.0.0.0".parse().unwrap())
+                    s.local_addr()
+                        .ok()
+                        .map(|a| a.ip())
+                        .unwrap_or("0.0.0.0".parse().unwrap())
                 } else {
                     "0.0.0.0".parse().unwrap() // Fallback
                 }
@@ -89,14 +97,19 @@ async fn discover_speakers(app: AppHandle) -> Result<(), String> {
     let socket = match UdpSocket::bind(SocketAddr::new(local_ip, 0)).await {
         Ok(s) => s,
         Err(e) => {
-            log(format!("Failed to bind to local IP: {}. Falling back to 0.0.0.0", e));
-            UdpSocket::bind("0.0.0.0:0").await.map_err(|e| e.to_string())?
+            log(format!(
+                "Failed to bind to local IP: {}. Falling back to 0.0.0.0",
+                e
+            ));
+            UdpSocket::bind("0.0.0.0:0")
+                .await
+                .map_err(|e| e.to_string())?
         }
     };
-    
+
     socket.set_broadcast(true).map_err(|e| e.to_string())?;
 
-    let socket = Arc::new(socket); 
+    let socket = Arc::new(socket);
     let recv_socket = socket.clone();
     let app_handle = app.clone();
     let _log_recv = log.clone();
@@ -105,18 +118,20 @@ async fn discover_speakers(app: AppHandle) -> Result<(), String> {
     tauri::async_runtime::spawn(async move {
         let mut buf = [0u8; 2048];
         let start = std::time::Instant::now();
-        let _ = app_handle.emit("heos-debug", format!("Listening on {:?}...", recv_socket.local_addr()));
-        
+        let _ = app_handle.emit(
+            "heos-debug",
+            format!("Listening on {:?}...", recv_socket.local_addr()),
+        );
+
         while start.elapsed() < Duration::from_secs(5) {
-            match tokio::time::timeout(
-                Duration::from_secs(1),
-                recv_socket.recv_from(&mut buf),
-            ).await 
+            match tokio::time::timeout(Duration::from_secs(1), recv_socket.recv_from(&mut buf))
+                .await
             {
                 Ok(Ok((len, addr))) => {
                     let resp = String::from_utf8_lossy(&buf[..len]);
                     if resp.contains("ST: urn:schemas-denon-com:device:ACT-Denon:1") {
-                        let _ = app_handle.emit("heos-debug", format!("Found device at {}", addr.ip()));
+                        let _ =
+                            app_handle.emit("heos-debug", format!("Found device at {}", addr.ip()));
                         let _ = app_handle.emit("speaker-discovered", addr.ip().to_string());
                     }
                 }
@@ -143,46 +158,52 @@ async fn discover_speakers(app: AppHandle) -> Result<(), String> {
     // Attempt to send
     if let Err(e) = socket.send_to(msg.as_bytes(), multicast_addr).await {
         log(format!("Send error ({}). Retrying with 0.0.0.0...", e));
-        
+
         if let Ok(fallback_sock) = UdpSocket::bind("0.0.0.0:0").await {
-             let _ = fallback_sock.set_broadcast(true);
-             match fallback_sock.send_to(msg.as_bytes(), multicast_addr).await {
+            let _ = fallback_sock.set_broadcast(true);
+            match fallback_sock.send_to(msg.as_bytes(), multicast_addr).await {
                 Ok(_) => log("Fallback M-SEARCH sent successfully.".to_string()),
                 Err(e) => log(format!("Fallback M-SEARCH failed: {}", e)),
-             }
-             
-             let fb_recv = Arc::new(fallback_sock);
-             let fb_app = app.clone();
-             let _fb_log = log.clone();
-             
-             tauri::async_runtime::spawn(async move {
+            }
+
+            let fb_recv = Arc::new(fallback_sock);
+            let fb_app = app.clone();
+            let _fb_log = log.clone();
+
+            tauri::async_runtime::spawn(async move {
                 let mut buf = [0u8; 2048];
                 let start = std::time::Instant::now();
                 let _ = fb_app.emit("heos-debug", "Fallback listener started.".to_string());
-                
+
                 while start.elapsed() < Duration::from_secs(5) {
-                    match tokio::time::timeout(Duration::from_secs(1), fb_recv.recv_from(&mut buf)).await {
-                         Ok(Ok((len, addr))) => {
-                             let resp = String::from_utf8_lossy(&buf[..len]);
-                             if resp.contains("ST: urn:schemas-denon-com:device:ACT-Denon:1") {
-                                 let _ = fb_app.emit("speaker-discovered", addr.ip().to_string());
-                                 let _ = fb_app.emit("heos-debug", format!("Fallback found device at {}", addr.ip()));
-                             }
-                         }
-                         Ok(Err(e)) => {
-                             let _ = fb_app.emit("heos-debug", format!("Fallback UDP recv error: {}", e));
-                         }
-                         Err(_) => {}
+                    match tokio::time::timeout(Duration::from_secs(1), fb_recv.recv_from(&mut buf))
+                        .await
+                    {
+                        Ok(Ok((len, addr))) => {
+                            let resp = String::from_utf8_lossy(&buf[..len]);
+                            if resp.contains("ST: urn:schemas-denon-com:device:ACT-Denon:1") {
+                                let _ = fb_app.emit("speaker-discovered", addr.ip().to_string());
+                                let _ = fb_app.emit(
+                                    "heos-debug",
+                                    format!("Fallback found device at {}", addr.ip()),
+                                );
+                            }
+                        }
+                        Ok(Err(e)) => {
+                            let _ = fb_app
+                                .emit("heos-debug", format!("Fallback UDP recv error: {}", e));
+                        }
+                        Err(_) => {}
                     }
                 }
                 let _ = fb_app.emit("heos-debug", "Fallback listener finished.".to_string());
-             });
+            });
         } else {
-             log("Failed to bind fallback socket.".to_string());
-             return Err(e.to_string());
+            log("Failed to bind fallback socket.".to_string());
+            return Err(e.to_string());
         }
     } else {
-         log(format!("Sent M-SEARCH to {}", multicast_addr));
+        log(format!("Sent M-SEARCH to {}", multicast_addr));
     }
 
     Ok(())
@@ -244,8 +265,8 @@ async fn send_command(
     if let Some(args) = args {
         let query: Vec<String> = args.iter().map(|(k, v)| format!("{}={}", k, v)).collect();
         if !query.is_empty() {
-             cmd_str.push('?');
-             cmd_str.push_str(&query.join("&"));
+            cmd_str.push('?');
+            cmd_str.push_str(&query.join("&"));
         }
     }
     cmd_str.push_str("\r\n");
@@ -274,14 +295,14 @@ pub fn run() {
                 let window = app.get_webview_window("main").unwrap();
                 window.open_devtools();
             }
-            
+
             // Create menu
             use tauri::menu::{Menu, MenuItem, PredefinedMenuItem, Submenu};
 
             // Standard macOS menus
             let app_menu = Submenu::with_items(
                 app,
-                "Heos Controller", 
+                "Heos Controller",
                 true,
                 &[
                     &PredefinedMenuItem::about(app, None, None).unwrap(),
@@ -293,16 +314,16 @@ pub fn run() {
                     &PredefinedMenuItem::separator(app).unwrap(),
                     &PredefinedMenuItem::quit(app, None).unwrap(),
                 ],
-            ).unwrap();
+            )
+            .unwrap();
 
             let file_menu = Submenu::with_items(
                 app,
                 "File",
                 true,
-                &[
-                    &PredefinedMenuItem::close_window(app, None).unwrap(),
-                ],
-            ).unwrap();
+                &[&PredefinedMenuItem::close_window(app, None).unwrap()],
+            )
+            .unwrap();
 
             let edit_menu = Submenu::with_items(
                 app,
@@ -317,9 +338,17 @@ pub fn run() {
                     &PredefinedMenuItem::paste(app, None).unwrap(),
                     &PredefinedMenuItem::select_all(app, None).unwrap(),
                 ],
-            ).unwrap();
+            )
+            .unwrap();
 
-            let devtools_i = MenuItem::with_id(app, "devtools", "Toggle Developer Tools", true, Some("CmdOrCtrl+Option+I")).unwrap();
+            let devtools_i = MenuItem::with_id(
+                app,
+                "devtools",
+                "Toggle Developer Tools",
+                true,
+                Some("CmdOrCtrl+Option+I"),
+            )
+            .unwrap();
             let view_menu = Submenu::with_items(
                 app,
                 "View",
@@ -329,7 +358,8 @@ pub fn run() {
                     &PredefinedMenuItem::separator(app).unwrap(),
                     &devtools_i,
                 ],
-            ).unwrap();
+            )
+            .unwrap();
 
             let window_menu = Submenu::with_items(
                 app,
@@ -339,27 +369,35 @@ pub fn run() {
                     &PredefinedMenuItem::minimize(app, None).unwrap(),
                     &PredefinedMenuItem::separator(app).unwrap(),
                 ],
-            ).unwrap();
+            )
+            .unwrap();
 
             // Help Menu
             let doc_i = MenuItem::with_id(app, "doc", "Documentation", true, None::<&str>).unwrap();
             let help_menu = Submenu::with_items(app, "Help", true, &[&doc_i]).unwrap();
-            
-            let menu = Menu::with_items(app, &[
-                &app_menu,
-                &file_menu, 
-                &edit_menu, 
-                &view_menu, 
-                &window_menu, 
-                &help_menu
-            ]).unwrap();
-            
+
+            let menu = Menu::with_items(
+                app,
+                &[
+                    &app_menu,
+                    &file_menu,
+                    &edit_menu,
+                    &view_menu,
+                    &window_menu,
+                    &help_menu,
+                ],
+            )
+            .unwrap();
+
             app.set_menu(menu).unwrap();
-            
+
             app.on_menu_event(move |app, event| {
                 if event.id() == "doc" {
                     use tauri_plugin_opener::OpenerExt;
-                    let _ = app.opener().open_url("https://github.com/cold-logic/heos-controller/wiki", None::<&str>);
+                    let _ = app.opener().open_url(
+                        "https://github.com/cold-logic/heos-controller/wiki",
+                        None::<&str>,
+                    );
                 }
                 if event.id() == "devtools" {
                     if let Some(window) = app.get_webview_window("main") {
