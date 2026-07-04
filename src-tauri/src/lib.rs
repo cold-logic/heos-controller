@@ -1,8 +1,8 @@
 use std::net::SocketAddr;
 use std::sync::Arc;
 use std::time::Duration;
-use tauri::{AppHandle, Emitter, Manager, State};
 use tauri::menu::{Menu, MenuItem, PredefinedMenuItem, Submenu};
+use tauri::{AppHandle, Emitter, Manager, State};
 use tauri_plugin_store::StoreExt;
 use tokio::io::{AsyncBufReadExt, AsyncWriteExt, BufReader};
 use tokio::net::{TcpStream, UdpSocket};
@@ -337,7 +337,8 @@ fn create_menu(app: &AppHandle, mode: &str) -> Result<Menu<tauri::Wry>, String> 
     .map_err(|e| e.to_string())?;
 
     // Help Menu
-    let doc_i = MenuItem::with_id(app, "doc", "Documentation", true, None::<&str>).map_err(|e| e.to_string())?;
+    let doc_i = MenuItem::with_id(app, "doc", "Documentation", true, None::<&str>)
+        .map_err(|e| e.to_string())?;
     let help_menu = Submenu::with_items(app, "Help", true, &[&doc_i]).map_err(|e| e.to_string())?;
 
     if mode == "settings" {
@@ -378,16 +379,8 @@ fn create_menu(app: &AppHandle, mode: &str) -> Result<Menu<tauri::Wry>, String> 
         )
         .map_err(|e| e.to_string())
     } else {
-        Menu::with_items(
-            app,
-            &[
-                &app_menu,
-                &view_menu,
-                &window_menu,
-                &help_menu,
-            ],
-        )
-        .map_err(|e| e.to_string())
+        Menu::with_items(app, &[&app_menu, &view_menu, &window_menu, &help_menu])
+            .map_err(|e| e.to_string())
     }
 }
 
