@@ -1,6 +1,7 @@
 use std::net::SocketAddr;
 use std::sync::Arc;
 use std::time::Duration;
+use tauri::menu::{Menu, MenuItem, PredefinedMenuItem, Submenu};
 use tauri::{AppHandle, Emitter, Manager, State};
 use tauri_plugin_store::StoreExt;
 use tokio::io::{AsyncBufReadExt, AsyncWriteExt, BufReader};
@@ -284,6 +285,112 @@ async fn send_command(
     }
 }
 
+fn create_menu(app: &AppHandle, mode: &str) -> Result<Menu<tauri::Wry>, String> {
+    // App Menu
+    let app_menu = Submenu::with_items(
+        app,
+        "Heos Controller",
+        true,
+        &[
+            &PredefinedMenuItem::about(app, None, None).map_err(|e| e.to_string())?,
+            &PredefinedMenuItem::separator(app).map_err(|e| e.to_string())?,
+            &PredefinedMenuItem::services(app, None).map_err(|e| e.to_string())?,
+            &PredefinedMenuItem::separator(app).map_err(|e| e.to_string())?,
+            &PredefinedMenuItem::hide(app, None).map_err(|e| e.to_string())?,
+            &PredefinedMenuItem::hide_others(app, None).map_err(|e| e.to_string())?,
+            &PredefinedMenuItem::separator(app).map_err(|e| e.to_string())?,
+            &PredefinedMenuItem::quit(app, None).map_err(|e| e.to_string())?,
+        ],
+    )
+    .map_err(|e| e.to_string())?;
+
+    let devtools_i = MenuItem::with_id(
+        app,
+        "devtools",
+        "Toggle Developer Tools",
+        true,
+        Some("CmdOrCtrl+Option+I"),
+    )
+    .map_err(|e| e.to_string())?;
+
+    let view_menu = Submenu::with_items(
+        app,
+        "View",
+        true,
+        &[
+            &PredefinedMenuItem::fullscreen(app, None).map_err(|e| e.to_string())?,
+            &PredefinedMenuItem::separator(app).map_err(|e| e.to_string())?,
+            &devtools_i,
+        ],
+    )
+    .map_err(|e| e.to_string())?;
+
+    let window_menu = Submenu::with_items(
+        app,
+        "Window",
+        true,
+        &[
+            &PredefinedMenuItem::minimize(app, None).map_err(|e| e.to_string())?,
+            &PredefinedMenuItem::separator(app).map_err(|e| e.to_string())?,
+        ],
+    )
+    .map_err(|e| e.to_string())?;
+
+    // Help Menu
+    let doc_i = MenuItem::with_id(app, "doc", "Documentation", true, None::<&str>)
+        .map_err(|e| e.to_string())?;
+    let help_menu = Submenu::with_items(app, "Help", true, &[&doc_i]).map_err(|e| e.to_string())?;
+
+    if mode == "settings" {
+        let file_menu = Submenu::with_items(
+            app,
+            "File",
+            true,
+            &[&PredefinedMenuItem::close_window(app, None).map_err(|e| e.to_string())?],
+        )
+        .map_err(|e| e.to_string())?;
+
+        let edit_menu = Submenu::with_items(
+            app,
+            "Edit",
+            true,
+            &[
+                &PredefinedMenuItem::undo(app, None).map_err(|e| e.to_string())?,
+                &PredefinedMenuItem::redo(app, None).map_err(|e| e.to_string())?,
+                &PredefinedMenuItem::separator(app).map_err(|e| e.to_string())?,
+                &PredefinedMenuItem::cut(app, None).map_err(|e| e.to_string())?,
+                &PredefinedMenuItem::copy(app, None).map_err(|e| e.to_string())?,
+                &PredefinedMenuItem::paste(app, None).map_err(|e| e.to_string())?,
+                &PredefinedMenuItem::select_all(app, None).map_err(|e| e.to_string())?,
+            ],
+        )
+        .map_err(|e| e.to_string())?;
+
+        Menu::with_items(
+            app,
+            &[
+                &app_menu,
+                &file_menu,
+                &edit_menu,
+                &view_menu,
+                &window_menu,
+                &help_menu,
+            ],
+        )
+        .map_err(|e| e.to_string())
+    } else {
+        Menu::with_items(app, &[&app_menu, &view_menu, &window_menu, &help_menu])
+            .map_err(|e| e.to_string())
+    }
+}
+
+#[tauri::command]
+fn set_menu_mode(app: AppHandle, mode: String) -> Result<(), String> {
+    let menu = create_menu(&app, &mode)?;
+    app.set_menu(menu).map_err(|e| e.to_string())?;
+    Ok(())
+}
+
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     tauri::Builder::default()
@@ -296,100 +403,9 @@ pub fn run() {
                 window.open_devtools();
             }
 
-            // Create menu
-            use tauri::menu::{Menu, MenuItem, PredefinedMenuItem, Submenu};
-
-            // Standard macOS menus
-            let app_menu = Submenu::with_items(
-                app,
-                "Heos Controller",
-                true,
-                &[
-                    &PredefinedMenuItem::about(app, None, None).unwrap(),
-                    &PredefinedMenuItem::separator(app).unwrap(),
-                    &PredefinedMenuItem::services(app, None).unwrap(),
-                    &PredefinedMenuItem::separator(app).unwrap(),
-                    &PredefinedMenuItem::hide(app, None).unwrap(),
-                    &PredefinedMenuItem::hide_others(app, None).unwrap(),
-                    &PredefinedMenuItem::separator(app).unwrap(),
-                    &PredefinedMenuItem::quit(app, None).unwrap(),
-                ],
-            )
-            .unwrap();
-
-            let file_menu = Submenu::with_items(
-                app,
-                "File",
-                true,
-                &[&PredefinedMenuItem::close_window(app, None).unwrap()],
-            )
-            .unwrap();
-
-            let edit_menu = Submenu::with_items(
-                app,
-                "Edit",
-                true,
-                &[
-                    &PredefinedMenuItem::undo(app, None).unwrap(),
-                    &PredefinedMenuItem::redo(app, None).unwrap(),
-                    &PredefinedMenuItem::separator(app).unwrap(),
-                    &PredefinedMenuItem::cut(app, None).unwrap(),
-                    &PredefinedMenuItem::copy(app, None).unwrap(),
-                    &PredefinedMenuItem::paste(app, None).unwrap(),
-                    &PredefinedMenuItem::select_all(app, None).unwrap(),
-                ],
-            )
-            .unwrap();
-
-            let devtools_i = MenuItem::with_id(
-                app,
-                "devtools",
-                "Toggle Developer Tools",
-                true,
-                Some("CmdOrCtrl+Option+I"),
-            )
-            .unwrap();
-            let view_menu = Submenu::with_items(
-                app,
-                "View",
-                true,
-                &[
-                    &PredefinedMenuItem::fullscreen(app, None).unwrap(),
-                    &PredefinedMenuItem::separator(app).unwrap(),
-                    &devtools_i,
-                ],
-            )
-            .unwrap();
-
-            let window_menu = Submenu::with_items(
-                app,
-                "Window",
-                true,
-                &[
-                    &PredefinedMenuItem::minimize(app, None).unwrap(),
-                    &PredefinedMenuItem::separator(app).unwrap(),
-                ],
-            )
-            .unwrap();
-
-            // Help Menu
-            let doc_i = MenuItem::with_id(app, "doc", "Documentation", true, None::<&str>).unwrap();
-            let help_menu = Submenu::with_items(app, "Help", true, &[&doc_i]).unwrap();
-
-            let menu = Menu::with_items(
-                app,
-                &[
-                    &app_menu,
-                    &file_menu,
-                    &edit_menu,
-                    &view_menu,
-                    &window_menu,
-                    &help_menu,
-                ],
-            )
-            .unwrap();
-
-            app.set_menu(menu).unwrap();
+            // Create initial menu
+            let menu = create_menu(app.handle(), "default")?;
+            app.set_menu(menu)?;
 
             app.on_menu_event(move |app, event| {
                 if event.id() == "doc" {
@@ -419,7 +435,8 @@ pub fn run() {
             discover_speakers,
             connect_speaker,
             send_command,
-            get_network_interfaces
+            get_network_interfaces,
+            set_menu_mode
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
