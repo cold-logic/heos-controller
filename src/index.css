@@ -62,3 +62,14 @@ body {
   outline: 2px solid var(--bs-primary);
   outline-offset: -2px;
 }
+
+.control.disabled {
+  pointer-events: none;
+  opacity: 0.5;
+  background-color: transparent !important;
+}
+
+.volume-dial.disabled {
+  pointer-events: none;
+  opacity: 0.5;
+}

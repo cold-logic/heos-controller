@@ -67,6 +67,14 @@ function initializeApp() {
 
   const settingsModal = new bootstrap.Modal(document.getElementById('settingsModal'));
 
+  const settingsModalEl = document.getElementById('settingsModal');
+  settingsModalEl.addEventListener('show.bs.modal', () => {
+    invoke('set_menu_mode', { mode: 'settings' }).catch(e => console.error(e));
+  });
+  settingsModalEl.addEventListener('hide.bs.modal', () => {
+    invoke('set_menu_mode', { mode: 'default' }).catch(e => console.error(e));
+  });
+
   const knobConfig = {
     fgColor: '#66CC66',
     bgColor: knobBgColor(),
@@ -117,7 +125,12 @@ function initializeApp() {
     const pid = ui.speaker.$.find(':selected').data('pid');
 
     if ($this.is(ui.refresh.sel)) {
-      sendCmd('player/get_players');
+      if (currentConnection) {
+        sendCmd('player/get_players');
+      } else {
+        console.log('Not connected, starting speaker discovery...');
+        invoke('discover_speakers').catch(e => console.error(e));
+      }
     }
     if (pid) {
       if ($this.is(ui.prev.sel)) playPrev(pid);
@@ -159,6 +172,33 @@ function initializeApp() {
     invoke('discover_speakers');
   });
 
+  $('#manual-connect-btn').on('click', () => {
+    const ip = $('#manual-ip-input').val().trim();
+    if (!ip) {
+      alert('Please enter a valid IP address.');
+      return;
+    }
+    settingsModal.hide();
+
+    let exists = false;
+    ui.speaker.$.children().each(function() {
+      if ($(this).data('ip') === ip || $(this).data('pid') === ip) {
+        exists = true;
+      }
+    });
+
+    if (!exists) {
+      const option = document.createElement('option');
+      option.textContent = `Manual (${ip})`;
+      option.dataset.ip = ip;
+      option.dataset.pid = ip;
+      option.selected = true;
+      ui.speaker.$.append(option);
+    }
+
+    connect(ip);
+  });
+
   setupListeners();
 
   // Start discovery loop
@@ -174,6 +214,8 @@ function initializeApp() {
       discoveryInterval = null;
     }
   };
+
+  updateUIConnectionState();
 }
 
 let currentConnection = null;
@@ -214,6 +256,7 @@ async function setupListeners() {
   await listen('heos-disconnected', () => {
     console.log('Disconnected from HEOS server');
     currentConnection = null;
+    updateUIConnectionState();
     if (!discoveryInterval) {
       console.log('Restarting discovery...');
       const discover = () => invoke('discover_speakers').catch(e => console.error(e));
@@ -237,6 +280,7 @@ function connect(ip) {
       console.log('Connected to server!');
       currentConnection = ip; // Track active connection
       isConnecting = false;
+      updateUIConnectionState();
       if (window.stopDiscovery) window.stopDiscovery(); // Stop scanning
 
       setTimeout(function () {
@@ -387,4 +431,21 @@ function playPrev(pid) {
 
 function playNext(pid) {
   sendCmd('player/play_next', { pid: pid });
+}
+
+function updateUIConnectionState() {
+  const connected = !!currentConnection;
+  if (connected) {
+    ui.prev.$.removeClass('disabled').attr('tabindex', '0');
+    ui.state.$.removeClass('disabled').attr('tabindex', '0');
+    ui.next.$.removeClass('disabled').attr('tabindex', '0');
+    ui.dial.$.trigger('configure', { readOnly: false });
+    $('.volume-dial').removeClass('disabled');
+  } else {
+    ui.prev.$.addClass('disabled').removeAttr('tabindex');
+    ui.state.$.addClass('disabled').removeAttr('tabindex');
+    ui.next.$.addClass('disabled').removeAttr('tabindex');
+    ui.dial.$.trigger('configure', { readOnly: true });
+    $('.volume-dial').addClass('disabled');
+  }
 }
