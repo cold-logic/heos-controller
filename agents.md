@@ -45,3 +45,9 @@ This project uses `pnpm` exclusively.
 
 *   **macOS**: The release bundle (`.app`) MUST be signed with `Entitlements.plist` to access the network (due to App Sandbox).
 *   The `pnpm build` command handles this automatically via `scripts/sign.js`.
+
+## Git LFS & Jujutsu (jj) Warning
+
+*   **Git LFS Required:** This repository uses Git LFS to track binaries (like `.icns`, `.png`, and `.ico` files).
+*   **Jujutsu (jj) Incompatibility:** Jujutsu does **not** support Git LFS. If you use Jujutsu (`jj`) to commit changes, it will commit raw binary files directly to Git, bypassing the LFS pointer mechanism and corrupting the Git LFS database.
+*   **Guideline:** AI agents and developers must use standard Git CLI (`git commit`, `git push`) instead of Jujutsu (`jj`) for making and pushing commits in this repository.
