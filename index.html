@@ -78,6 +78,15 @@
             </select>
             <div class="form-text">Select the network used to find your speakers.</div>
           </div>
+          <hr>
+          <div class="mb-3">
+            <label for="manual-ip-input" class="form-label">Manual Speaker IP</label>
+            <div class="input-group">
+              <input type="text" id="manual-ip-input" class="form-control" placeholder="e.g., 192.168.1.100">
+              <button class="btn btn-primary" type="button" id="manual-connect-btn">Connect</button>
+            </div>
+            <div class="form-text">Connect directly by IP if auto-detection fails.</div>
+          </div>
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>

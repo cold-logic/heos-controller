@@ -1,6 +1,6 @@
 {
   "name": "heos-controller",
-  "version": "2.0.1",
+  "version": "2.0.3",
   "description": "Controller for Denon Heos speakers",
   "private": true,
   "type": "module",
