@@ -46,8 +46,35 @@ This project uses `pnpm` exclusively.
 *   **macOS**: The release bundle (`.app`) MUST be signed with `Entitlements.plist` to access the network (due to App Sandbox).
 *   The `pnpm build` command handles this automatically via `scripts/sign.js`.
 
-## Git LFS & Jujutsu (jj) Warning
+## Git LFS & Jujutsu (jj)
 
-*   **Git LFS Required:** This repository uses Git LFS to track binaries (like `.icns`, `.png`, and `.ico` files).
-*   **Jujutsu (jj) Incompatibility:** Jujutsu does **not** support Git LFS. If you use Jujutsu (`jj`) to commit changes, it will commit raw binary files directly to Git, bypassing the LFS pointer mechanism and corrupting the Git LFS database.
-*   **Guideline:** AI agents and developers must use standard Git CLI (`git commit`, `git push`) instead of Jujutsu (`jj`) for making and pushing commits in this repository.
+Jujutsu (jj) does not natively support Git LFS. It lacks the internal data representations and the "clean/smudge" text filters required to parse, download, or track LFS pointer files natively. 
+Because jj automatically snapshots and commits changes from your working directory continuously, using it directly in an LFS-heavy repository can cause significant problems. 
+
+### The Issues with Mixing jj and Git LFS
+If you attempt to use jj in an LFS repository, you will likely experience the following breakages:
+* **Accidental Large Commits:** Instead of checking in a lightweight text pointer file, jj may snapshot and track the raw, massive binary file directly into your native Git history.
+* **Hook Failures:** Git LFS heavily relies on Git hooks (like pre-push) to upload your large assets to an external server. Because jj bypasses traditional Git hooks during its operations, your LFS files may never actually get uploaded to GitHub, GitLab, or your storage backend.
+* **Spurious Merge Conflicts:** Pulling down changes can leave jj completely confused by the LFS pointer files, resulting in persistent metadata or tree conflicts that standard Git doesn't show.
+
+### How to Work Around It (The Dual-Tool Workflow)
+If you must work in a repository that uses Git LFS but still want the benefits of jj's history rewriting and conflict management, you have to use a colocated workspace. This approach relies on a hybrid model where both a `.jj` and a `.git` folder exist in the same working directory.
+
+Follow these specific rules to keep your repository healthy:
+1. **Use Git for Ingestion and Synchronization:** Always use standard git commands to pull down updates or download large files.
+   ```bash
+   git fetch
+   git lfs pull
+   ```
+2. **Let jj Automatically Import the State:** Once Git has correctly swapped out the pointer files for the actual large assets in your working directory, jj will automatically detect and sync those changes into its internal view.
+3. **Use Git for Final Pushes:** Do not use `jj git push`. If you use jj to push, the LFS binary assets will not be intercepted by the Git LFS hooks. Instead, export your jj state back to a Git branch and push using standard Git:
+   ```bash
+   # Ensure your bookmarks/branches are updated
+   jj bookmark export 
+   # Push via native Git so the LFS hooks trigger normally
+   git push origin main
+   ```
+
+### Future Roadmap
+The Jujutsu community is actively tracking Git LFS support under [GitHub Issue #80](https://github.com/jj-vcs/jj/issues/80). The developers are exploring whether to implement Git-style clean/smudge filters or to build a more robust, native large-file architecture into jj's pluggable backend data model. Until version 1.0 or formal LFS integration arrives, the dual-tool workflow remains mandatory.
+
